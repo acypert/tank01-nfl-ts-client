@@ -171,6 +171,7 @@ A developer needs to access advanced NFL statistics, trends, projections, and an
 - **SC-008**: Package successfully installs and runs in both CommonJS and ES Module projects
 - **SC-009**: 80% or higher test coverage across unit, integration, and contract tests
 - **SC-010**: All query parameters from Tank01 API documentation are exposed as type-safe method parameters
+- **SC-011**: Live game data is updated within 10 seconds of the underlying API refresh (data freshness SLA)
 
 ## Assumptions
 

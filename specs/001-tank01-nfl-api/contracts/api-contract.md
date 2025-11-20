@@ -545,6 +545,8 @@ The client automatically handles rate limiting:
 - Implements exponential backoff with jitter
 - Throws `Tank01RateLimitError` after max retries exceeded
 
+**Rate Limit Details**: Rate limits are enforced by RapidAPI based on your subscription tier. Consult your RapidAPI dashboard or subscription plan documentation for specific request limits (requests per second/minute/day). The Tank01 API does not publish fixed rate limits as they vary by subscription level.
+
 ---
 
 ## Response Caching

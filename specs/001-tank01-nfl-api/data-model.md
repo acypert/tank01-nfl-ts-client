@@ -94,9 +94,15 @@ This document defines the TypeScript interfaces and zod schemas for all entities
 **Validation Rules**:
 
 - `playerID` must be non-empty string
-- `pos` must be valid NFL position code
+- `pos` must be valid NFL position code (see valid codes below)
 - `age` must be positive integer if provided
 - `jerseyNum` must be valid jersey number (0-99)
+
+**Valid Position Codes**:
+
+- **Offense**: QB (Quarterback), RB (Running Back), FB (Fullback), WR (Wide Receiver), TE (Tight End), OT (Offensive Tackle), OG (Offensive Guard), C (Center), OL (Offensive Line - generic)
+- **Defense**: DT (Defensive Tackle), DE (Defensive End), DL (Defensive Line - generic), MLB (Middle Linebacker), OLB (Outside Linebacker), LB (Linebacker - generic), CB (Cornerback), FS (Free Safety), SS (Strong Safety), S (Safety - generic), DB (Defensive Back - generic)
+- **Special Teams**: K (Kicker), P (Punter), LS (Long Snapper)
 
 **Relationships**:
 
