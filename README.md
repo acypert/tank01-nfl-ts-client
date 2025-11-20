@@ -7,6 +7,8 @@ A TypeScript client package for retrieving NFL statistics from the Tank01 sports
 
 This package provides a clean, type-safe interface for accessing Tank01 NFL API endpoints, enabling easy integration of NFL statistics into your applications. Built with TypeScript and featuring comprehensive type definitions, runtime validation, and extensive test coverage.
 
+API documentation: https://rapidapi.com/tank01/api/tank01-nfl-live-in-game-real-time-statistics-nfl/playground
+
 ## Project Principles
 
 This project follows a strict [Constitution](.specify/memory/constitution.md) that governs:
