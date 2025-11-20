@@ -1,5 +1,4 @@
 ---
-
 description: "Task list template for feature implementation"
 ---
 
@@ -20,26 +19,29 @@ description: "Task list template for feature implementation"
 
 ## Path Conventions
 
-- **Single project**: `src/`, `tests/` at repository root
-- **Web app**: `backend/src/`, `frontend/src/`
-- **Mobile**: `api/src/`, `ios/src/` or `android/src/`
-- Paths shown below assume single project - adjust based on plan.md structure
+- **TypeScript Client Library**: Feature-folder structure
+  - `src/[feature]/` - Feature code (e.g., `src/players/`, `src/teams/`)
+  - `src/[feature]/__tests__/` - Co-located tests
+  - `src/common/` - Shared utilities, HTTP client, error types
+  - Alternative: `tests/` at root with mirrored structure
 
-<!-- 
+**Note**: Paths in examples below use feature-folder structure. Adjust based on plan.md.
+
+<!--
   ============================================================================
   IMPORTANT: The tasks below are SAMPLE TASKS for illustration purposes only.
-  
+
   The /speckit.tasks command MUST replace these with actual tasks based on:
   - User stories from spec.md (with their priorities P1, P2, P3...)
   - Feature requirements from plan.md
   - Entities from data-model.md
   - Endpoints from contracts/
-  
+
   Tasks MUST be organized by user story so each story can be:
   - Implemented independently
   - Tested independently
   - Delivered as an MVP increment
-  
+
   DO NOT keep these sample tasks in the generated tasks.md file.
   ============================================================================
 -->
@@ -48,9 +50,13 @@ description: "Task list template for feature implementation"
 
 **Purpose**: Project initialization and basic structure
 
-- [ ] T001 Create project structure per implementation plan
-- [ ] T002 Initialize [language] project with [framework] dependencies
-- [ ] T003 [P] Configure linting and formatting tools
+- [ ] T001 Initialize TypeScript project with tsconfig.json (strict mode enabled)
+- [ ] T002 [P] Setup package.json with dependencies (node-fetch, zod, vitest/jest)
+- [ ] T003 [P] Configure ESLint with TypeScript rules
+- [ ] T004 [P] Configure Prettier for code formatting
+- [ ] T005 Configure build tooling (tsup or tsc) for dual CJS/ESM output
+- [ ] T006 Create base directory structure (src/common/, src/types/)
+- [ ] T007 Setup test infrastructure (vitest/jest config, test utilities)
 
 ---
 
@@ -60,16 +66,18 @@ description: "Task list template for feature implementation"
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-Examples of foundational tasks (adjust based on your project):
+- [ ] T008 Create base HTTP client wrapper in src/common/http/client.ts
+- [ ] T009 Implement retry logic with exponential backoff
+- [ ] T010 Implement timeout handling (default 30s)
+- [ ] T011 [P] Create custom error types in src/common/errors/
+- [ ] T012 [P] Implement API authentication handler (API key injection)
+- [ ] T013 [P] Create configuration type and loader in src/common/config.ts
+- [ ] T014 Create base response validator using zod
+- [ ] T015 Setup logging/debugging utilities
+- [ ] T016 [P] Write tests for HTTP client (mocked fetch)
+- [ ] T017 [P] Write tests for error types and handling
 
-- [ ] T004 Setup database schema and migrations framework
-- [ ] T005 [P] Implement authentication/authorization framework
-- [ ] T006 [P] Setup API routing and middleware structure
-- [ ] T007 Create base models/entities that all stories depend on
-- [ ] T008 Configure error handling and logging infrastructure
-- [ ] T009 Setup environment configuration management
-
-**Checkpoint**: Foundation ready - user story implementation can now begin in parallel
+**Checkpoint**: Foundation ready - feature API endpoints can now be implemented in parallel
 
 ---
 
@@ -83,17 +91,20 @@ Examples of foundational tasks (adjust based on your project):
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T010 [P] [US1] Contract test for [endpoint] in tests/contract/test_[name].py
-- [ ] T011 [P] [US1] Integration test for [user journey] in tests/integration/test_[name].py
+- [ ] T018 [P] [US1] Create zod schema test in src/[feature]/**tests**/schemas.test.ts
+- [ ] T019 [P] [US1] Create client unit test in src/[feature]/**tests**/client.test.ts
+- [ ] T020 [P] [US1] Create integration test in src/[feature]/**tests**/integration.test.ts
+- [ ] T021 [P] [US1] Create contract test in tests/contract/test\_[feature].ts
 
 ### Implementation for User Story 1
 
-- [ ] T012 [P] [US1] Create [Entity1] model in src/models/[entity1].py
-- [ ] T013 [P] [US1] Create [Entity2] model in src/models/[entity2].py
-- [ ] T014 [US1] Implement [Service] in src/services/[service].py (depends on T012, T013)
-- [ ] T015 [US1] Implement [endpoint/feature] in src/[location]/[file].py
-- [ ] T016 [US1] Add validation and error handling
-- [ ] T017 [US1] Add logging for user story 1 operations
+- [ ] T022 [P] [US1] Define TypeScript types in src/[feature]/types.ts
+- [ ] T023 [P] [US1] Create zod validation schemas in src/[feature]/schemas.ts
+- [ ] T024 [US1] Implement API client methods in src/[feature]/client.ts
+- [ ] T025 [US1] Add error handling for specific API failure modes
+- [ ] T026 [US1] Add TSDoc comments with usage examples
+- [ ] T027 [US1] Export public API in src/[feature]/index.ts
+- [ ] T028 [US1] Update main package index.ts to export feature
 
 **Checkpoint**: At this point, User Story 1 should be fully functional and testable independently
 
@@ -107,8 +118,8 @@ Examples of foundational tasks (adjust based on your project):
 
 ### Tests for User Story 2 (OPTIONAL - only if tests requested) ⚠️
 
-- [ ] T018 [P] [US2] Contract test for [endpoint] in tests/contract/test_[name].py
-- [ ] T019 [P] [US2] Integration test for [user journey] in tests/integration/test_[name].py
+- [ ] T018 [P] [US2] Contract test for [endpoint] in tests/contract/test\_[name].py
+- [ ] T019 [P] [US2] Integration test for [user journey] in tests/integration/test\_[name].py
 
 ### Implementation for User Story 2
 
@@ -129,8 +140,8 @@ Examples of foundational tasks (adjust based on your project):
 
 ### Tests for User Story 3 (OPTIONAL - only if tests requested) ⚠️
 
-- [ ] T024 [P] [US3] Contract test for [endpoint] in tests/contract/test_[name].py
-- [ ] T025 [P] [US3] Integration test for [user journey] in tests/integration/test_[name].py
+- [ ] T024 [P] [US3] Contract test for [endpoint] in tests/contract/test\_[name].py
+- [ ] T025 [P] [US3] Integration test for [user journey] in tests/integration/test\_[name].py
 
 ### Implementation for User Story 3
 
