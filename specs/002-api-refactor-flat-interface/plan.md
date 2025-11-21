@@ -108,6 +108,7 @@ All clarifications have been completed in the spec.md file during the clarificat
 **Decision**: No additional research phase needed - all ambiguities resolved during spec clarification.
 
 **Rationale**: The clarification session answered all high-impact questions. Implementation details are clear:
+
 - Architecture pattern: Flat interface with feature folders
 - Parameter validation: Client-side with descriptive TypeErrors
 - Testing approach: Minimal contract tests (8-10 critical endpoints)
@@ -120,17 +121,20 @@ All clarifications have been completed in the spec.md file during the clarificat
 #### Endpoint Organization by Feature
 
 **Teams** (src/teams/):
+
 - getNFLTeams: List all teams with optional enrichment (rosters, schedules, stats, standings)
 - getNFLTeamRoster: Get team roster (requires teamID OR teamAbv)
 - getNFLTeamSchedule: Get team schedule (requires teamID OR teamAbv)
 - getNFLDepthCharts: Get depth charts for all teams (NEW)
 
 **Players** (src/players/):
+
 - getNFLPlayerList: Get all players (4,500+ records)
 - getNFLPlayerInfo: Get player info (requires playerName OR playerID)
 - getNFLGamesForPlayer: Get player game log (NEW)
 
 **Games** (src/games/):
+
 - getNFLGamesForWeek: Get games for a week (requires week, optional seasonType/season)
 - getNFLGameInfo: Get game details (requires gameID)
 - getNFLTeamSchedule: Team-specific schedule
@@ -138,30 +142,37 @@ All clarifications have been completed in the spec.md file during the clarificat
 - getNFLGamesForDate: Games by date (NEW)
 
 **Live** (src/live/):
+
 - getNFLBoxScore: Get box score with optional play-by-play and fantasy points
 
 **Fantasy** (src/fantasy/ - NEW FOLDER):
+
 - getNFLADP: Average draft position (requires adpType)
 - getNFLProjections: Fantasy projections (weekly or seasonal)
 - getNFLDFS: Daily fantasy sports data (requires date)
 
 **Odds** (src/odds/ - NEW FOLDER):
+
 - getNFLBettingOdds: Betting lines (requires gameDate OR gameID)
 
 **News** (src/news/ - NEW FOLDER):
+
 - getNFLNews: NFL news feed with filtering options
 
 **Info** (src/info/ - NEW FOLDER):
+
 - getNFLCurrentInfo: Current NFL season/week information
 
 #### Parameter Validation Strategy
 
 **OR Constraints** (require exactly one):
+
 - playerName OR playerID → validateOneOf()
 - teamID OR teamAbv → validateOneOf()
 - gameDate OR gameID → validateOneOf()
 
 **Dependencies**:
+
 - fantasyPoints=true requires getStats=true
 - Various parameters override each other (documented in JSDoc)
 
@@ -195,6 +206,7 @@ contracts/
 ```
 
 Each schema file exports:
+
 1. Request parameter zod schema
 2. Response zod schema
 3. TypeScript types inferred from schemas
@@ -205,16 +217,18 @@ Each schema file exports:
 # Tank01 NFL Client v0.2.0 - Quickstart
 
 ## Installation
+
 \`\`\`bash
 npm install @tank01/nfl-client
 \`\`\`
 
 ## Basic Usage
+
 \`\`\`typescript
 import { Tank01Client } from '@tank01/nfl-client';
 
 const client = new Tank01Client({
-  apiKey: process.env.TANK01_API_KEY,
+apiKey: process.env.TANK01_API_KEY,
 });
 
 // Get all teams with rosters
@@ -222,20 +236,20 @@ const teams = await client.getNFLTeams({ rosters: true });
 
 // Get player info (either playerName OR playerID)
 const purdy = await client.getNFLPlayerInfo({
-  playerName: 'brock_purdy',
-  getStats: true,
+playerName: 'brock_purdy',
+getStats: true,
 });
 
 // Get week 1 games
 const games = await client.getNFLGamesForWeek({
-  week: '1',
-  season: 2024,
-  seasonType: 'reg',
+week: '1',
+season: 2024,
+seasonType: 'reg',
 });
 
 // Get betting odds
 const odds = await client.getNFLBettingOdds({
-  gameDate: '20241215',
+gameDate: '20241215',
 });
 \`\`\`
 
@@ -244,12 +258,14 @@ const odds = await client.getNFLBettingOdds({
 **BREAKING CHANGE**: Nested clients removed.
 
 ### Before (v0.1.0)
+
 \`\`\`typescript
 const teams = await client.teams.getTeams();
 const player = await client.players.getPlayer('4381786');
 \`\`\`
 
 ### After (v0.2.0)
+
 \`\`\`typescript
 const teams = await client.getNFLTeams();
 const player = await client.getNFLPlayerInfo({ playerID: 4381786 });
@@ -410,6 +426,7 @@ package.json                  # UPDATED - version 0.2.0
 | None      | -          | -                                    |
 
 **Analysis**: This refactor maintains full Constitution compliance. No violations required:
+
 - Type safety maintained throughout (strict TypeScript)
 - Feature folder organization preserved (adding 4 new folders)
 - Comprehensive testing maintained (unit + integration + minimal contract)
@@ -420,10 +437,12 @@ package.json                  # UPDATED - version 0.2.0
 ## Execution Checklist
 
 ### Phase 0: Research (Completed)
+
 - [x] All clarifications resolved during spec phase
 - [x] No additional research needed
 
 ### Phase 1: Design & Contracts
+
 - [x] Data model documented (inline in this plan)
 - [ ] Generate contract schemas in contracts/ directory
 - [x] Quickstart guide documented (inline in this plan)
@@ -431,10 +450,12 @@ package.json                  # UPDATED - version 0.2.0
 - [x] Constitution compliance verified
 
 ### Phase 2: Implementation (Generated by /speckit.tasks)
+
 - [ ] Will be broken down into ~50-80 specific tasks
 - [ ] Task categories: refactor, update, remove, add, validate, document, test, release
 
 ### Post-Implementation
+
 - [ ] Verify all Constitution checks pass
 - [ ] Run full test suite (npm test)
 - [ ] Build package (npm run build)
@@ -452,20 +473,22 @@ package.json                  # UPDATED - version 0.2.0
 
 ## Notes
 
-**Critical Path**: 
+**Critical Path**:
+
 1. Refactor Tank01Client class (breaks everything)
 2. Update existing endpoint parameters (unblocks testing)
 3. Add new endpoints (completes feature set)
 4. Add validation & documentation (quality gates)
 
 **Risk Mitigation**:
+
 - Keep feature folders intact during refactor
 - Update tests incrementally with code changes
 - Use minimal contract tests to respect API quota
 - Document breaking changes thoroughly
 
 **API Quota Management**:
+
 - Contract tests limited to 8-10 critical endpoints
 - Tests run manually before releases (not in CI)
 - Each test run <100 API requests (10% of monthly quota)
-
