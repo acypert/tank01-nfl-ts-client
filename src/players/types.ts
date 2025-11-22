@@ -111,3 +111,58 @@ export interface PlayerSearchFilters {
   /** Filter by rookie status */
   isRookie?: boolean | undefined;
 }
+
+/**
+ * Options for getNFLPlayerInfo endpoint
+ * Requires either playerName or playerID (mutually exclusive)
+ */
+export interface GetPlayerInfoOptions {
+  /** Player name (e.g., "Brock Purdy") - use this OR playerID */
+  playerName?: string;
+  /** Player ID (e.g., "4381786") - use this OR playerName */
+  playerID?: string;
+  /** Include player statistics in response */
+  getStats?: boolean;
+}
+
+/**
+ * Options for getNFLGamesForPlayer endpoint
+ */
+export interface GetGamesForPlayerOptions {
+  /** Player ID */
+  playerID: string;
+  /** Optional team ID filter */
+  teamID?: string;
+  /** Optional game ID filter */
+  gameID?: string;
+  /** Response format: "map" or "list" */
+  itemFormat?: 'map' | 'list';
+  /** Number of games to return */
+  numberOfGames?: number;
+  /** Include fantasy points (defaults to false when omitted) */
+  fantasyPoints?: boolean;
+}
+
+/**
+ * Player game log entry
+ */
+export interface PlayerGameLog {
+  /** Game ID */
+  gameID: string;
+  /** Player ID */
+  playerID: string;
+  /** Season */
+  season: string;
+  /** Week */
+  week: string;
+  /** Team abbreviation */
+  team: string;
+  /** Opponent team abbreviation */
+  opponent: string;
+  /** Game date */
+  gameDate: string;
+  /** Statistics for the game */
+  stats: Record<string, unknown>;
+  /** Fantasy points (if fantasyPoints: true) */
+  fantasyPoints?: number | undefined;
+}

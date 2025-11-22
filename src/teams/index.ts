@@ -1,3 +1,15 @@
-export { TeamsClient } from './client.js';
-export type { Team } from './types.js';
-export { TeamSchema } from './schemas.js';
+export type {
+  Team,
+  GetNFLTeamsOptions,
+  GetTeamRosterOptions,
+  DepthChart,
+  DepthChartPosition,
+} from './types.js';
+export {
+  TeamSchema,
+  TeamsResponseSchema,
+  GetNFLTeamsOptionsSchema,
+  GetTeamRosterOptionsSchema,
+  DepthChartSchema,
+  DepthChartsResponseSchema,
+} from './schemas.js';

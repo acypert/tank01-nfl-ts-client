@@ -87,6 +87,49 @@ export const PlayerStatsResponseSchema = z.object({
   body: PlayerStatisticsSchema,
 });
 
+/**
+ * Schema for getNFLPlayerInfo options
+ */
+export const GetPlayerInfoOptionsSchema = z.object({
+  playerName: z.string().optional(),
+  playerID: z.string().optional(),
+  getStats: z.boolean().optional(),
+});
+
+/**
+ * Schema for getNFLGamesForPlayer options
+ */
+export const GetGamesForPlayerOptionsSchema = z.object({
+  playerID: z.string().min(1),
+  teamID: z.string().optional(),
+  gameID: z.string().optional(),
+  itemFormat: z.enum(['map', 'list']).optional(),
+  numberOfGames: z.number().positive().optional(),
+  fantasyPoints: z.boolean().optional(),
+});
+
+/**
+ * Schema for player game log
+ */
+export const PlayerGameLogSchema = z.object({
+  gameID: z.string(),
+  playerID: z.string(),
+  season: z.string(),
+  week: z.string(),
+  team: z.string(),
+  opponent: z.string(),
+  gameDate: z.string(),
+  stats: z.record(z.unknown()), // Flexible stats object
+  fantasyPoints: z.number().optional(),
+});
+
+/**
+ * Schema for player game logs response
+ */
+export const PlayerGameLogsResponseSchema = z.object({
+  body: z.array(PlayerGameLogSchema),
+});
+
 export type Player = z.infer<typeof PlayerSchema>;
 export type PlayerStatistics = z.infer<typeof PlayerStatisticsSchema>;
 export type PlayerInjury = z.infer<typeof PlayerInjurySchema>;

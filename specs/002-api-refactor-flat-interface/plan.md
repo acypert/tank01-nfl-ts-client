@@ -58,6 +58,18 @@ _GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 - [x] Contract tests validate response types match schemas (minimal coverage due to quota)
 - [x] Error handling paths are tested
 
+**Contract Test Priority** (8 endpoints, ~50 API requests total):
+
+1. `getNFLTeams` - Basic call + with options (rosters, teamStats): 3 requests
+2. `getNFLTeamRoster` - teamID + teamAbv OR validation: 2 requests
+3. `getNFLPlayerInfo` - playerName + playerID OR validation: 2 requests
+4. `getNFLGamesForWeek` - Current week + seasonType parameter: 2 requests
+5. `getNFLBoxScore` - Basic + with playByPlay/fantasyPoints: 2 requests
+6. `getNFLADP` - halfPPR + PPR adpType: 2 requests
+7. `getNFLBettingOdds` - gameDate + gameID OR validation: 2 requests
+8. `getNFLProjections` - week + playerID override: 2 requests
+9. Additional smoke tests for remaining 22 endpoints: ~35 requests
+
 **Status**: ✅ PASS - Plan includes test updates for all changed methods, minimal contract tests per quota constraint
 
 ### API Contract Compliance

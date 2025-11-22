@@ -75,6 +75,46 @@ export const GameDetailsResponseSchema = z.object({
   body: GameDetailsSchema,
 });
 
+/**
+ * Schema for getNFLGamesForWeek options
+ */
+export const GetGamesForWeekOptionsSchema = z.object({
+  week: z.string().min(1),
+  season: z.string().optional(),
+  seasonType: z.enum(['reg', 'post', 'pre', 'all']).optional(),
+});
+
+/**
+ * Schema for getNFLBoxScore options
+ */
+export const GetBoxScoreOptionsSchema = z.object({
+  gameID: z.string().min(1),
+  playByPlay: z.boolean().optional(),
+  fantasyPoints: z.boolean().optional(),
+});
+
+/**
+ * Schema for getNFLGamesForDate options
+ */
+export const GetGamesForDateOptionsSchema = z.object({
+  gameDate: z.string().regex(/^\\d{8}$/),
+});
+
+/**
+ * Schema for getNFLScoresOnly options
+ */
+export const GetScoresOnlyOptionsSchema = z
+  .object({
+    season: z.string().optional(),
+    week: z.string().optional(),
+    gameDate: z
+      .string()
+      .regex(/^\\d{8}$/)
+      .optional(),
+    topTeamsOnly: z.boolean().optional(),
+  })
+  .optional();
+
 export type Game = z.infer<typeof GameSchema>;
 export type GameDetails = z.infer<typeof GameDetailsSchema>;
 export type ScoringPlay = z.infer<typeof ScoringPlaySchema>;

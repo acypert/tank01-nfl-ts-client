@@ -1,3 +1,18 @@
-export { PlayersClient } from './client.js';
-export type { Player, PlayerStatistics, PlayerInjury, PlayerSearchFilters } from './types.js';
-export { PlayerSchema, PlayerStatisticsSchema } from './schemas.js';
+export type {
+  Player,
+  PlayerStatistics,
+  PlayerInjury,
+  PlayerSearchFilters,
+  GetPlayerInfoOptions,
+  GetGamesForPlayerOptions,
+  PlayerGameLog,
+} from './types.js';
+export {
+  PlayerSchema,
+  PlayerStatisticsSchema,
+  PlayersResponseSchema,
+  GetPlayerInfoOptionsSchema,
+  GetGamesForPlayerOptionsSchema,
+  PlayerGameLogSchema,
+  PlayerGameLogsResponseSchema,
+} from './schemas.js';

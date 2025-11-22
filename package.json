@@ -1,7 +1,7 @@
 {
   "name": "tank01-nfl-client",
-  "version": "0.1.0",
-  "description": "TypeScript client library for Tank01 NFL API",
+  "version": "0.2.0",
+  "description": "TypeScript client library for Tank01 NFL API with flat interface",
   "type": "module",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",

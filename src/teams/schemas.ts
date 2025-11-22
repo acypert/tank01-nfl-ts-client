@@ -27,4 +27,60 @@ export const TeamsResponseSchema = z.object({
   body: z.array(TeamSchema),
 });
 
+/**
+ * Schema for getNFLTeams options
+ */
+export const GetNFLTeamsOptionsSchema = z
+  .object({
+    sortBy: z.string().optional(),
+    rosters: z.boolean().optional(),
+    schedules: z.boolean().optional(),
+    topPerformers: z.boolean().optional(),
+    teamStats: z.boolean().optional(),
+    teamStatsSeason: z.string().optional(),
+    standingsSeason: z.string().optional(),
+  })
+  .optional();
+
+/**
+ * Schema for getNFLTeamRoster options
+ */
+export const GetTeamRosterOptionsSchema = z.object({
+  teamID: z.string().optional(),
+  teamAbv: z.string().optional(),
+  archiveDate: z
+    .string()
+    .regex(/^\d{8}$/)
+    .optional(),
+  getStats: z.boolean().optional(),
+  fantasyPoints: z.boolean().optional(),
+});
+
+/**
+ * Schema for depth chart position
+ */
+export const DepthChartPositionSchema = z.object({
+  playerID: z.string(),
+  playerName: z.string(),
+  depth: z.number(),
+  position: z.string(),
+});
+
+/**
+ * Schema for team depth chart
+ */
+export const DepthChartSchema = z.object({
+  teamAbv: z.string(),
+  teamName: z.string(),
+  depthChart: z.record(z.array(DepthChartPositionSchema)),
+  lastUpdated: z.string().optional(),
+});
+
+/**
+ * Schema for depth charts response
+ */
+export const DepthChartsResponseSchema = z.object({
+  body: z.array(DepthChartSchema),
+});
+
 export type Team = z.infer<typeof TeamSchema>;

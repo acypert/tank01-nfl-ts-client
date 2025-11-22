@@ -1,4 +1,3 @@
-export { LiveClient } from './client.js';
 export type {
   LiveGame,
   LiveBoxScore,
@@ -7,4 +6,4 @@ export type {
   LivePlayerStats,
   PlayByPlayEvent,
 } from './types.js';
-export { LiveGameSchema, LiveBoxScoreSchema } from './schemas.js';
+export { LiveGameSchema, LiveBoxScoreSchema, PlayByPlayEventSchema } from './schemas.js';

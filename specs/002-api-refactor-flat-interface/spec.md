@@ -110,7 +110,7 @@ A developer needs access to all Tank01 API functionality including endpoints tha
 **Acceptance Scenarios**:
 
 1. **Given** the need for fantasy football data, **When** the developer calls `getADP("halfPPR")`, **Then** average draft position data is returned for all players
-2. **Given** the need for betting information, **When** the developer calls `getBettingOdds({ gameDate: "20241215" })`, **Then** odds from multiple sportsbooks are returned
+2. **Given** the need for betting information, **When** the developer calls `getNFLBettingOdds({ gameDate: "20241215" })`, **Then** odds from multiple sportsbooks are returned
 3. **Given** the need for news, **When** the developer calls `getNews({ teamAbv: "SF", recentNews: true })`, **Then** recent news articles for the 49ers are returned
 4. **Given** the need for depth charts, **When** the developer calls `getDepthCharts()`, **Then** current depth chart information for all teams is returned
 
@@ -149,7 +149,7 @@ A developer needs access to all Tank01 API functionality including endpoints tha
 - **FR-009**: All parameters marked optional in API MUST be optional in client methods
 - **FR-010**: All parameters marked required in API MUST be required in client methods
 - **FR-011**: Parameter types MUST match API expectations (string "20241215" not Date object)
-- **FR-012**: `fantasyPoints` parameter MUST default to false when present
+- **FR-012**: `fantasyPoints` parameter is optional (can be omitted). When omitted, it defaults to false. TypeScript signature: `fantasyPoints?: boolean`
 - **FR-013**: `itemFormat` parameter MUST accept "map" or "list" values where applicable
 - **FR-034**: Client MUST validate OR parameter requirements (teamID/teamAbv, playerName/playerID, gameDate/gameID) and throw descriptive TypeError before making API calls when constraints violated
 
@@ -172,7 +172,7 @@ A developer needs access to all Tank01 API functionality including endpoints tha
 - **FR-025**: Client MUST expose `getNFLGamesForDate(gameDate)` method with full zod schema validation
 - **FR-026**: Client MUST expose `getNFLProjections(options?)` with week, playerID, teamID, archiveSeason, itemFormat and full zod schema validation
 - **FR-027**: Client MUST expose `getNFLDFS(date, options?)` with includeTeamDefense option and full zod schema validation
-- **FR-028**: Client MUST expose `getBettingOdds(gameDate|gameID, options?)` with itemFormat, impliedTotals, playerProps, playerID and full zod schema validation
+- **FR-028**: Client MUST expose `getNFLBettingOdds(gameDate|gameID, options?)` with itemFormat, impliedTotals, playerProps, playerID and full zod schema validation
 - **FR-029**: Client MUST expose `getNFLNews(options?)` with playerID, teamID, teamAbv, topNews, fantasyNews, recentNews, maxItems and full zod schema validation
 - **FR-030**: Client MUST expose `getNFLCurrentInfo(date?)` method with full zod schema validation
 

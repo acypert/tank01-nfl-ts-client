@@ -1,9 +1,20 @@
-export { GamesClient } from './client.js';
 export type {
   Game,
   GameDetails,
   GameScheduleFilters,
   ScoringPlay,
   TeamGameStats,
+  GetGamesForWeekOptions,
+  GetBoxScoreOptions,
+  GetGamesForDateOptions,
+  GetScoresOnlyOptions,
 } from './types.js';
-export { GameSchema, GameDetailsSchema } from './schemas.js';
+export {
+  GameSchema,
+  GameDetailsSchema,
+  GamesResponseSchema,
+  GetGamesForWeekOptionsSchema,
+  GetBoxScoreOptionsSchema,
+  GetGamesForDateOptionsSchema,
+  GetScoresOnlyOptionsSchema,
+} from './schemas.js';

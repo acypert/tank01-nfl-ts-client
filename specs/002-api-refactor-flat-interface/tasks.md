@@ -8,7 +8,7 @@
 
 Tasks are organized by user story to enable independent implementation and testing. Each phase represents a complete, independently testable increment.
 
-**Total Tasks**: 89  
+**Total Tasks**: 205  
 **Estimated Duration**: 2-3 days
 
 ---
@@ -132,7 +132,7 @@ Tasks are organized by user story to enable independent implementation and testi
 - [ ] T055 [P] [US2] Create src/players/getNFLGamesForPlayer.ts with implementation
 - [ ] T056 [P] [US2] Add PlayerGameLog types in src/players/types.ts
 - [ ] T057 [P] [US2] Add zod schema for player game log response in src/players/schemas.ts
-- [ ] T058 [US2] Add GetGamesForPlayerOptions interface with playerID, teamID, gameID, itemFormat, numberOfGames, fantasyPoints (default false)
+- [ ] T058 [US2] Add GetGamesForPlayerOptions interface with playerID, teamID, gameID, itemFormat, numberOfGames, fantasyPoints (optional, defaults to false when omitted)
 - [ ] T059 [US2] Add getNFLGamesForPlayer() method to Tank01Client in src/client.ts
 - [ ] T060 [US2] Add comprehensive JSDoc with all parameter descriptions
 - [ ] T061 [US2] Create test file src/players/**tests**/getNFLGamesForPlayer.test.ts
@@ -405,7 +405,7 @@ Tasks are organized by user story to enable independent implementation and testi
 ### Contract Tests (Minimal - API Quota Aware)
 
 - [ ] T188 Create tests/contract/ directory
-- [ ] T189 Create tests/contract/README.md documenting quota limits and manual execution
+- [ ] T189 Create tests/contract/README.md documenting quota limits, manual execution, and priority endpoint list (see plan.md Contract Test Priority section for 8-endpoint list totaling ~50 requests)
 - [ ] T190 [P] Create tests/contract/teams.contract.test.ts testing getNFLTeams and getNFLTeamRoster
 - [ ] T191 [P] Create tests/contract/players.contract.test.ts testing getNFLPlayerInfo with both playerName and playerID
 - [ ] T192 [P] Create tests/contract/games.contract.test.ts testing getNFLGamesForWeek and getNFLScoresOnly
