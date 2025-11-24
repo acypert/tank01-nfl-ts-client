@@ -59,3 +59,12 @@ export const LiveBoxScoreSchema = z.object({
   network: z.string(),
   playerStats: z.record(PlayerGameSchema),
 });
+
+// ========================================
+// Zod-Inferred Types
+// ========================================
+
+export type Dst = z.infer<typeof DstSchema>;
+export type LineScoreTeam = z.infer<typeof LineScoreTeamSchema>;
+export type LineScore = z.infer<typeof LineScoreSchema>;
+export type LiveBoxScore = z.infer<typeof LiveBoxScoreSchema>;

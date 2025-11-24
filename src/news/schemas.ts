@@ -32,3 +32,10 @@ export const NewsArticleSchema = z.array(z.unknown());
 export const NewsResponseSchema = z.object({
   body: NewsArticleSchema,
 });
+
+// ========================================
+// Zod-Inferred Types
+// ========================================
+
+export type GetNewsOptions = z.infer<typeof GetNewsOptionsSchema>;
+export type NewsArticle = z.infer<typeof NewsArticleSchema>;

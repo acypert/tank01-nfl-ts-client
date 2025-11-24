@@ -93,4 +93,130 @@ export const DepthChartsResponseSchema = z.object({
   body: z.array(DepthChartSchema),
 });
 
+/**
+ * Schema for roster player statistics
+ */
+export const RosterPlayerStatsSchema = z.object({
+  gamesPlayed: z.string(),
+  teamID: z.string(),
+  team: z.string(),
+  teamAbv: z.string(),
+  Passing: z
+    .object({
+      qbr: z.string(),
+      rtg: z.string(),
+      sacked: z.string(),
+      passAttempts: z.string(),
+      passAvg: z.string(),
+      passTD: z.string(),
+      passYds: z.string(),
+      int: z.string(),
+      passCompletions: z.string(),
+      passingTwoPointConversion: z.string().optional(),
+    })
+    .optional(),
+  Rushing: z
+    .object({
+      rushYds: z.string(),
+      rushingTwoPointConversion: z.string(),
+      carries: z.string(),
+      rushTD: z.string(),
+    })
+    .optional(),
+  Receiving: z
+    .object({
+      receivingTwoPointConversion: z.string(),
+      receptions: z.string(),
+      recTD: z.string(),
+      targets: z.string(),
+      recYds: z.string(),
+    })
+    .optional(),
+  Defense: z
+    .object({
+      totalTackles: z.string(),
+      fumblesLost: z.string(),
+      defTD: z.string(),
+      fumbles: z.string(),
+      fumblesRecovered: z.string(),
+      twoPointConversionReturn: z.string(),
+      soloTackles: z.string(),
+      defensiveInterceptions: z.string(),
+      qbHits: z.string(),
+      tfl: z.string(),
+      passDeflections: z.string(),
+      sacks: z.string(),
+    })
+    .optional(),
+  Kicking: z
+    .object({
+      fgAttempts: z.string(),
+      fgMade: z.string(),
+      xpMade: z.string(),
+      fgYds: z.string(),
+      kickYards: z.string(),
+      xpAttempts: z.string(),
+    })
+    .optional(),
+});
+
+/**
+ * Schema for roster player
+ */
+export const RosterPlayerSchema = z.object({
+  playerID: z.string(),
+  longName: z.string(),
+  jerseyNum: z.string(),
+  pos: z.string(),
+  team: z.string(),
+  height: z.string(),
+  weight: z.string(),
+  bDay: z.string(),
+  school: z.string(),
+  exp: z.string(),
+  injury: z.object({
+    injReturnDate: z.string(),
+    description: z.string(),
+    injDate: z.string(),
+    designation: z.string(),
+  }),
+  age: z.string(),
+  teamID: z.string(),
+  espnID: z.string(),
+  espnName: z.string(),
+  espnLink: z.string(),
+  espnHeadshot: z.string(),
+  espnIDFull: z.string(),
+  cbsPlayerID: z.string().optional(),
+  cbsLongName: z.string(),
+  cbsShortName: z.string().optional(),
+  cbsPlayerIDFull: z.string(),
+  yahooPlayerID: z.string(),
+  yahooLink: z.string(),
+  sleeperBotID: z.string(),
+  fRefID: z.string(),
+  rotoWirePlayerID: z.string(),
+  rotoWirePlayerIDFull: z.string(),
+  fantasyProsLink: z.string().optional(),
+  fantasyProsPlayerID: z.string().optional(),
+  lastGamePlayed: z.string(),
+  isFreeAgent: z.string(),
+  stats: RosterPlayerStatsSchema.optional(),
+});
+
+/**
+ * Schema for team roster response
+ */
+export const TeamRosterResponseSchema = z.object({
+  body: z.object({
+    team: z.string(),
+    roster: z.array(RosterPlayerSchema),
+  }),
+});
+
+// Export Zod-inferred types as the source of truth
 export type Team = z.infer<typeof TeamSchema>;
+export type DepthChart = z.infer<typeof DepthChartSchema>;
+export type DepthChartPosition = z.infer<typeof DepthChartPositionSchema>;
+export type RosterPlayer = z.infer<typeof RosterPlayerSchema>;
+export type RosterPlayerStats = z.infer<typeof RosterPlayerStatsSchema>;

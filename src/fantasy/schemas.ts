@@ -163,3 +163,25 @@ export const DFSPlayerSchema = z.array(z.unknown());
 export const DFSResponseSchema = z.object({
   body: DFSPlayerSchema,
 });
+
+// ========================================
+// Zod-Inferred Types
+// ========================================
+
+export type ADPType = z.infer<typeof ADPTypeSchema>;
+export type GetADPOptions = z.infer<typeof GetADPOptionsSchema>;
+export type PlayerADP = z.infer<typeof PlayerADPSchema>;
+export type ADPResponse = z.infer<typeof ADPResponseSchema>['body'];
+
+export type GetProjectionsOptions = z.infer<typeof GetProjectionsOptionsSchema>;
+export type RushingProjection = z.infer<typeof RushingProjectionSchema>;
+export type PassingProjection = z.infer<typeof PassingProjectionSchema>;
+export type ReceivingProjection = z.infer<typeof ReceivingProjectionSchema>;
+export type FantasyPoints = z.infer<typeof FantasyPointsSchema>;
+export type KickingProjection = z.infer<typeof KickingProjectionSchema>;
+export type PlayerProjection = z.infer<typeof PlayerProjectionSchema>;
+export type TeamDefenseProjection = z.infer<typeof TeamDefenseProjectionSchema>;
+export type ProjectionsResponse = z.infer<typeof ProjectionsResponseSchema>['body'];
+
+export type GetDFSOptions = z.infer<typeof GetDFSOptionsSchema>;
+export type DFSPlayer = z.infer<typeof DFSPlayerSchema>;

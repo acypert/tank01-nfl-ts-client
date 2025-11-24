@@ -4,8 +4,19 @@ import { HttpClient } from './common/http/client.js';
 import { validateResponse } from './common/http/validator.js';
 import { validateOneOf } from './common/validation/parameters.js';
 import { Tank01NotFoundError } from './common/errors/not-found.js';
-import type { Team, GetNFLTeamsOptions, GetTeamRosterOptions, DepthChart } from './teams/types.js';
-import { TeamSchema, TeamsResponseSchema, DepthChartsResponseSchema } from './teams/schemas.js';
+import type {
+  Team,
+  GetNFLTeamsOptions,
+  GetTeamRosterOptions,
+  DepthChart,
+  RosterPlayer,
+} from './teams/types.js';
+import {
+  TeamSchema,
+  TeamsResponseSchema,
+  DepthChartsResponseSchema,
+  TeamRosterResponseSchema,
+} from './teams/schemas.js';
 import type {
   Player,
   PlayerSearchFilters,
@@ -44,7 +55,7 @@ import {
   ProjectionsResponseSchema,
   DFSResponseSchema,
 } from './fantasy/schemas.js';
-import type { GetBettingOddsOptions, GameOdds } from './odds/types.js';
+import type { GetBettingOddsOptions, BettingOddsResponse } from './odds/types.js';
 import { BettingOddsResponseSchema } from './odds/schemas.js';
 import type { GetNewsOptions, NewsArticle } from './news/types.js';
 import { NewsResponseSchema } from './news/schemas.js';
@@ -221,7 +232,7 @@ export class Tank01Client {
    * });
    * ```
    */
-  async getNFLTeamRoster(options: GetTeamRosterOptions): Promise<unknown[]> {
+  async getNFLTeamRoster(options: GetTeamRosterOptions): Promise<RosterPlayer[]> {
     // Validate OR requirement: exactly one of teamID or teamAbv
     validateOneOf(['teamID', 'teamAbv'], options as Record<string, unknown>, 'getNFLTeamRoster');
 
@@ -237,15 +248,9 @@ export class Tank01Client {
     if (options.getStats !== undefined) params.getStats = options.getStats;
     if (options.fantasyPoints !== undefined) params.fantasyPoints = options.fantasyPoints;
 
-    const response = await this.httpClient.get<{ body: unknown[] }>('/getNFLTeamRoster', params);
-
-    if (!response || typeof response !== 'object' || !('body' in response)) {
-      throw new Tank01NotFoundError(
-        `Team roster not found for: ${options.teamID || options.teamAbv}`
-      );
-    }
-
-    return (response as { body: unknown[] }).body;
+    const response = await this.httpClient.get('/getNFLTeamRoster', params);
+    const validated = validateResponse(response, TeamRosterResponseSchema);
+    return validated.body.roster;
   }
 
   /**
@@ -924,7 +929,7 @@ export class Tank01Client {
    * });
    * ```
    */
-  async getNFLBettingOdds(options: GetBettingOddsOptions): Promise<GameOdds> {
+  async getNFLBettingOdds(options: GetBettingOddsOptions): Promise<BettingOddsResponse> {
     // Validate OR requirement: exactly one of gameDate or gameID
     validateOneOf(['gameDate', 'gameID'], options as Record<string, unknown>, 'getNFLBettingOdds');
 
@@ -941,7 +946,10 @@ export class Tank01Client {
     if (options.playerProps !== undefined) params.playerProps = options.playerProps;
     if (options.playerID) params.playerID = options.playerID;
 
-    const response = await this.httpClient.get<{ body: GameOdds }>('/getNFLBettingOdds', params);
+    const response = await this.httpClient.get<{ body: BettingOddsResponse }>(
+      '/getNFLBettingOdds',
+      params
+    );
     const validated = validateResponse(response, BettingOddsResponseSchema);
     return validated.body;
   }

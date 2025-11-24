@@ -208,6 +208,15 @@ export const PlayerGameLogsResponseSchema = z.object({
   body: z.record(PlayerGameSchema),
 });
 
+// Export all Zod-inferred types as the source of truth
 export type Player = z.infer<typeof PlayerSchema>;
 export type PlayerStatistics = z.infer<typeof PlayerStatisticsSchema>;
 export type PlayerInjury = z.infer<typeof PlayerInjurySchema>;
+export type DefenseStats = z.infer<typeof DefenseStatsSchema>;
+export type PassingStats = z.infer<typeof PassingStatsSchema>;
+export type ReceivingStats = z.infer<typeof ReceivingStatsSchema>;
+export type RushingStats = z.infer<typeof RushingStatsSchema>;
+export type ScoringPlay = z.infer<typeof ScoringPlaySchema>;
+export type SnapCounts = z.infer<typeof SnapCountsSchema>;
+export type PlayerGame = z.infer<typeof PlayerGameSchema>;
+export type PlayerGameLog = z.infer<typeof PlayerGameLogsResponseSchema>['body'];

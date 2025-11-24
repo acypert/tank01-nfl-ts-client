@@ -34,3 +34,10 @@ export const CurrentInfoSchema = z.object({
 export const CurrentInfoResponseSchema = z.object({
   body: CurrentInfoSchema,
 });
+
+// ========================================
+// Zod-Inferred Types
+// ========================================
+
+export type GetCurrentInfoOptions = z.infer<typeof GetCurrentInfoOptionsSchema>;
+export type CurrentInfo = z.infer<typeof CurrentInfoSchema>;

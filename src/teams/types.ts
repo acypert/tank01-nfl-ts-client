@@ -1,47 +1,11 @@
-import type { Player } from '../players/types.js';
-
-/**
- * NFL Team entity
- */
-export interface Team {
-  /** Unique team identifier/abbreviation (e.g., "KC", "PHI") */
-  teamID: string;
-  /** Full team name (e.g., "Kansas City Chiefs") */
-  teamName: string;
-  /** Team's city */
-  teamCity: string;
-  /** Team abbreviation */
-  teamAbv: string;
-  /** Conference: "AFC" or "NFC" */
-  conference: 'AFC' | 'NFC' | 'American Football Conference' | 'National Football Conference';
-  /** Division: "North", "South", "East", or "West" */
-  division: 'North' | 'South' | 'East' | 'West';
-  /** Season wins */
-  wins: string;
-  /** Season losses */
-  loss: string;
-  /** Season ties */
-  tie: string;
-  /** Current season year */
-  seasonYear?: string | undefined;
-  /** Roster of players on the team */
-  Roster?: Record<string, Player> | undefined;
-  /** Points For */
-  pf: string;
-  /** Points Against */
-  pa: string;
-  /** Bye weeks by year */
-  byeWeeks: Record<string, string[]>;
-  /** ESPN Logo */
-  espnLogo1: string;
-  /** NFL.com Logo */
-  nflComLogo1: string;
-  /** Current Streak */
-  currentStreak: {
-    result: string;
-    length: string;
-  };
-}
+// Re-export Zod-inferred types from schemas (single source of truth)
+export type {
+  Team,
+  DepthChart,
+  DepthChartPosition,
+  RosterPlayer,
+  RosterPlayerStats,
+} from './schemas.js';
 
 /**
  * Options for getNFLTeams endpoint
@@ -78,28 +42,4 @@ export interface GetTeamRosterOptions {
   getStats?: boolean;
   /** Include fantasy points in statistics (requires getStats: true) */
   fantasyPoints?: boolean;
-}
-
-/**
- * Depth chart position entry
- */
-export interface DepthChartPosition {
-  /** Depth position */
-  depthPosition: string;
-  /** Player ID */
-  playerID: string;
-  /** Player name */
-  longName: string;
-}
-
-/**
- * Team depth chart
- */
-export interface DepthChart {
-  /** Team abbreviation */
-  teamAbv: string;
-  /** Team ID */
-  teamID: string;
-  /** Depth chart positions by position group */
-  depthChart: Record<string, DepthChartPosition[]>;
 }

@@ -64,3 +64,12 @@ export const GameOddsSchema = z.object({
 export const BettingOddsResponseSchema = z.object({
   body: z.record(GameOddsSchema),
 });
+
+// ========================================
+// Zod-Inferred Types
+// ========================================
+
+export type GetBettingOddsOptions = z.infer<typeof GetBettingOddsOptionsSchema>;
+export type SportsbookOdds = z.infer<typeof SportsbookOddsSchema>;
+export type GameOdds = z.infer<typeof GameOddsSchema>;
+export type BettingOddsResponse = z.infer<typeof BettingOddsResponseSchema>['body'];

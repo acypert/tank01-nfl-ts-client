@@ -13,7 +13,7 @@ import { CurrentInfoSchema } from './info/schemas';
 import { DepthChartSchema } from './teams/schemas';
 
 const readApiDoc = (fileName: string) => {
-  const filePath = join(process.cwd(), 'api-docs', fileName);
+  const filePath = join(process.cwd(), 'api-responses', fileName);
   const content = readFileSync(filePath, 'utf-8');
   const jsonBlocks: any[] = [];
   const regex = /## Parameters: (?:`(.+?)`)?\n\n([\s\S]*?)(?=(?:\n## Parameters:)|$)/g;

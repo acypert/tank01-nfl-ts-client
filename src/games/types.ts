@@ -1,42 +1,5 @@
-/**
- * NFL Game entity
- */
-export interface Game {
-  /** Unique game identifier */
-  gameID: string;
-  /** Season type */
-  seasonType: string;
-  /** Away team abbreviation */
-  away: string;
-  /** Game date (YYYYMMDD) */
-  gameDate: string;
-  /** ESPN game ID */
-  espnID: string;
-  /** Home team ID */
-  teamIDHome: string;
-  /** Game status (e.g., "Scheduled", "InProgress", "Final") */
-  gameStatus: string;
-  /** Game week number */
-  gameWeek: string;
-  /** Away team ID */
-  teamIDAway: string;
-  /** Home team abbreviation */
-  home: string;
-  /** ESPN link */
-  espnLink: string;
-  /** CBS link */
-  cbsLink: string;
-  /** Game time */
-  gameTime: string;
-  /** Game time epoch */
-  gameTime_epoch: string;
-  /** Season year */
-  season: string;
-  /** Neutral site flag */
-  neutralSite: string;
-  /** Game status code */
-  gameStatusCode: string;
-}
+// Re-export Zod-inferred types from schemas (single source of truth)
+export type { Game, GameDetails, ScoringPlay, TeamGameStats } from './schemas.js';
 
 /**
  * Game schedule filters
@@ -52,61 +15,6 @@ export interface GameScheduleFilters {
   status?: 'scheduled' | 'live' | 'final' | 'all' | undefined;
   /** Include playoff games only */
   playoffsOnly?: boolean | undefined;
-}
-
-/**
- * Detailed game information with scoring breakdown
- */
-export interface GameDetails extends Game {
-  /** Quarter-by-quarter scoring */
-  scoringPlays?: ScoringPlay[] | undefined;
-  /** Team statistics */
-  teamStats?:
-    | {
-        away?: TeamGameStats | undefined;
-        home?: TeamGameStats | undefined;
-      }
-    | undefined;
-}
-
-/**
- * Scoring play in a game
- */
-export interface ScoringPlay {
-  /** Play identifier */
-  playID?: string | undefined;
-  /** Team that scored */
-  team: string;
-  /** Quarter */
-  quarter?: string | undefined;
-  /** Time remaining */
-  time?: string | undefined;
-  /** Play description */
-  description?: string | undefined;
-  /** Points scored */
-  points?: number | undefined;
-  /** Score type (TD, FG, Safety, etc.) */
-  scoreType?: string | undefined;
-}
-
-/**
- * Team statistics for a specific game
- */
-export interface TeamGameStats {
-  /** Team abbreviation */
-  team: string;
-  /** Total yards */
-  totalYards?: number | undefined;
-  /** Passing yards */
-  passingYards?: number | undefined;
-  /** Rushing yards */
-  rushingYards?: number | undefined;
-  /** Turnovers */
-  turnovers?: number | undefined;
-  /** Time of possession */
-  timeOfPossession?: string | undefined;
-  /** First downs */
-  firstDowns?: number | undefined;
 }
 
 /**
