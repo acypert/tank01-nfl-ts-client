@@ -23,7 +23,8 @@
     "lint:fix": "eslint . --ext .ts --fix",
     "format": "prettier --write \"src/**/*.ts\"",
     "format:check": "prettier --check \"src/**/*.ts\"",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm test && npm run typecheck && npm run build"
   },
   "keywords": [
     "nfl",
@@ -34,7 +35,7 @@
     "sports",
     "statistics"
   ],
-  "author": "",
+  "author": "Antonio Cypert | acypert@derivital.com",
   "license": "ISC",
   "engines": {
     "node": ">=18.0.0"
@@ -59,6 +60,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/sports-genius-group/nfl-genius"
+    "url": "https://github.com/acypert/tank01-nfl-ts-client"
   }
 }
