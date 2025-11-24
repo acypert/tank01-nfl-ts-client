@@ -199,7 +199,7 @@ export const RosterPlayerSchema = z.object({
   rotoWirePlayerIDFull: z.string(),
   fantasyProsLink: z.string().optional(),
   fantasyProsPlayerID: z.string().optional(),
-  lastGamePlayed: z.string(),
+  lastGamePlayed: z.string().optional(),
   isFreeAgent: z.string(),
   stats: RosterPlayerStatsSchema.optional(),
 });
