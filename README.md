@@ -7,11 +7,15 @@ A production-ready TypeScript client for the Tank01 NFL API, providing comprehen
 
 This package provides a clean, type-safe interface for accessing all Tank01 NFL API endpoints. Built with TypeScript strict mode, featuring comprehensive type definitions, runtime validation with Zod schemas, and a flat interface design for maximum developer experience.
 
-**Version 1.0.1** is production-ready with 21+ validated endpoints, full TypeScript support, and comprehensive documentation.
+**Version 1.0.2** is production-ready with 21+ validated endpoints, full TypeScript support, and comprehensive documentation.
 
 🔗 [Tank01 NFL API Documentation](https://rapidapi.com/tank01/api/tank01-nfl-live-in-game-real-time-statistics-nfl/playground)
 
 ## Recent Updates
+
+### Version 1.0.2
+- 🔧 Fixed published type declarations path (`types` now resolves to `dist/index.d.ts`)
+- 📦 Added package `files` whitelist for cleaner publish
 
 ### Version 1.0.1
 - 📃 Updated README with latest changes
@@ -629,23 +633,73 @@ src/
 
 ## Package Distribution
 
-This package is distributed as dual-format (CommonJS + ES Modules):
+Dual-format (CommonJS + ES Modules) with consolidated type declarations:
 
-- **CommonJS**: `dist/cjs/` - For Node.js `require()`
-- **ES Modules**: `dist/esm/` - For `import` statements
-- **Type Definitions**: `dist/esm/*.d.ts` - Full TypeScript support
+- **CommonJS**: `dist/cjs/index.js`
+- **ES Modules**: `dist/esm/index.js`
+- **Type Definitions**: `dist/index.d.ts`
 
-```json
+Current `package.json` excerpt:
+```jsonc
 {
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
-  "types": "./dist/esm/index.d.ts",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/esm/index.js",
-      "require": "./dist/cjs/index.js",
-      "types": "./dist/esm/index.d.ts"
+      "require": "./dist/cjs/index.js"
     }
+  }
+}
+```
+
+### Using in Next.js / React
+
+No special configuration required. For best results:
+
+```jsonc
+// tsconfig.json
+{
+  "compilerOptions": {
+    "moduleResolution": "NodeNext", // or 'node16' / 'bundler'
+    "module": "NodeNext",           // optional; works with default too
+    "strict": true
+  }
+}
+```
+
+After upgrading to v1.0.2, if your editor still shows `any` types:
+
+```bash
+rm -rf node_modules package-lock.json
+npm install
+```
+
+Then reload your IDE TypeScript server (e.g. VS Code: Command Palette → TypeScript: Restart TS Server).
+
+### Error Handling Pattern (Next.js API Route Example)
+
+```typescript
+// app/api/game/[gameID]/route.ts (Next.js App Router)
+import { NextResponse } from 'next/server';
+import { Tank01Client, Tank01Error, Tank01NotFoundError } from 'tank01-nfl-client';
+
+const client = new Tank01Client({ apiKey: process.env.TANK01_API_KEY });
+
+export async function GET(_: Request, { params }: { params: { gameID: string } }) {
+  try {
+    const game = await client.getNFLGameInfo(params.gameID);
+    return NextResponse.json(game);
+  } catch (e) {
+    if (e instanceof Tank01NotFoundError) {
+      return NextResponse.json({ error: 'Game not found' }, { status: 404 });
+    }
+    if (e instanceof Tank01Error) {
+      return NextResponse.json({ error: e.message }, { status: e.statusCode ?? 500 });
+    }
+    return NextResponse.json({ error: 'Unexpected error' }, { status: 500 });
   }
 }
 ```

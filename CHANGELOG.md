@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [0.2.0] - 2024-11-21
+## [1.0.2] - 2025-11-24
+
+### Fixed
+
+- Corrected published TypeScript declaration path (`types` field and `exports.types` now point to `dist/index.d.ts` instead of non-existent `dist/esm/index.d.ts`). This resolves IDE and build errors where consumers (e.g. Next.js projects) saw methods like `getNFLGameInfo` and `getNFLGamesForWeek` returning `any` and custom error classes narrowing to `unknown`.
+- Added `files` whitelist to `package.json` to ensure consistent publish contents (dist output and key docs only).
+
+### Note
+
+No code logic changes; runtime behavior is unchanged. Safe upgrade—just reinstall to pick up proper type metadata.
+
 
 ### 🎉 Major Refactor: Flat Interface Architecture
 
