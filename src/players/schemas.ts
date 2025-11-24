@@ -4,9 +4,10 @@ import { z } from 'zod';
  * Zod schema for Player injury information
  */
 export const PlayerInjurySchema = z.object({
-  designation: z.string().optional(),
-  description: z.string().optional(),
-  injDate: z.string().optional(),
+  designation: z.string(),
+  description: z.string(),
+  injDate: z.string(),
+  injReturnDate: z.string(),
 });
 
 /**
@@ -15,21 +16,37 @@ export const PlayerInjurySchema = z.object({
 export const PlayerSchema = z.object({
   playerID: z.string().min(1),
   longName: z.string().min(1),
-  firstName: z.string().optional(),
-  lastName: z.string().optional(),
-  jerseyNum: z.string().optional(),
+  jerseyNum: z.string(),
   pos: z.string().min(1),
   team: z.string().min(2).max(3),
-  teamID: z.string().optional(),
-  height: z.string().optional(),
-  weight: z.string().optional(),
-  bDay: z.string().optional(),
-  college: z.string().optional(),
-  draftYear: z.string().optional(),
-  draftRound: z.string().optional(),
-  draftPick: z.string().optional(),
-  exp: z.string().optional(),
-  injury: PlayerInjurySchema.optional(),
+  height: z.string(),
+  weight: z.string(),
+  bDay: z.string(),
+  school: z.string(),
+  exp: z.string(),
+  injury: PlayerInjurySchema,
+  age: z.string(),
+  espnID: z.string(),
+  espnName: z.string(),
+  espnLink: z.string().url(),
+  espnHeadshot: z.string().url(),
+  espnIDFull: z.string(),
+  cbsPlayerID: z.string(),
+  cbsLongName: z.string(),
+  cbsShortName: z.string(),
+  cbsPlayerIDFull: z.string(),
+  yahooPlayerID: z.string(),
+  yahooLink: z.string().url(),
+  sleeperBotID: z.string(),
+  fRefID: z.string(),
+  rotoWirePlayerID: z.string(),
+  rotoWirePlayerIDFull: z.string(),
+  fantasyProsLink: z.string().url(),
+  fantasyProsPlayerID: z.string(),
+  lastGamePlayed: z.string(),
+  isFreeAgent: z.string(),
+  firstSeen: z.string(),
+  teamID: z.string(),
 });
 
 /**
@@ -108,26 +125,87 @@ export const GetGamesForPlayerOptionsSchema = z.object({
   fantasyPoints: z.boolean().optional(),
 });
 
-/**
- * Schema for player game log
- */
-export const PlayerGameLogSchema = z.object({
-  gameID: z.string(),
-  playerID: z.string(),
-  season: z.string(),
-  week: z.string(),
+export const DefenseStatsSchema = z.object({
+  fumblesLost: z.string().optional().or(z.undefined()),
+  defensiveInterceptions: z.string(),
+  forcedFumbles: z.string(),
+  fumbles: z.string().optional().or(z.undefined()),
+  fumblesRecovered: z.string().optional().or(z.undefined()),
+});
+
+export const PassingStatsSchema = z.object({
+  qbr: z.string(),
+  rtg: z.string(),
+  sacked: z.string(),
+  passAttempts: z.string(),
+  passAvg: z.string(),
+  passTD: z.string(),
+  passYds: z.string(),
+  int: z.string(),
+  passCompletions: z.string(),
+  passingTwoPointConversion: z.string().optional(),
+});
+
+export const ReceivingStatsSchema = z.object({
+  receptions: z.string(),
+  recTD: z.string(),
+  longRec: z.string(),
+  targets: z.string(),
+  recYds: z.string(),
+  recAvg: z.string(),
+});
+
+export const RushingStatsSchema = z.object({
+  rushAvg: z.string(),
+  rushYds: z.string(),
+  carries: z.string(),
+  longRush: z.string(),
+  rushTD: z.string(),
+  rushingTwoPointConversion: z.string().optional(),
+});
+
+export const ScoringPlaySchema = z.object({
+  score: z.string(),
+  scorePeriod: z.string(),
+  homeScore: z.string(),
+  awayScore: z.string(),
+  teamID: z.string(),
+  scoreDetails: z.string(),
+  scoreType: z.string(),
+  scoreTime: z.string(),
   team: z.string(),
-  opponent: z.string(),
-  gameDate: z.string(),
-  stats: z.record(z.unknown()), // Flexible stats object
-  fantasyPoints: z.number().optional(),
+  playerIDs: z.array(z.string()),
+});
+
+export const SnapCountsSchema = z.object({
+  offSnapPct: z.string(),
+  defSnap: z.string(),
+  stSnap: z.string(),
+  stSnapPct: z.string(),
+  offSnap: z.string(),
+  defSnapPct: z.string(),
+});
+
+export const PlayerGameSchema = z.object({
+  Defense: DefenseStatsSchema.optional().or(z.undefined()),
+  Passing: PassingStatsSchema.optional().or(z.undefined()),
+  Receiving: ReceivingStatsSchema.optional().or(z.undefined()),
+  Rushing: RushingStatsSchema.optional().or(z.undefined()),
+  longName: z.string(),
+  playerID: z.string(),
+  scoringPlays: z.array(ScoringPlaySchema).optional().or(z.undefined()),
+  snapCounts: SnapCountsSchema.optional().or(z.undefined()),
+  team: z.string(),
+  teamAbv: z.string(),
+  teamID: z.string(),
+  gameID: z.string(),
 });
 
 /**
  * Schema for player game logs response
  */
 export const PlayerGameLogsResponseSchema = z.object({
-  body: z.array(PlayerGameLogSchema),
+  body: z.record(PlayerGameSchema),
 });
 
 export type Player = z.infer<typeof PlayerSchema>;

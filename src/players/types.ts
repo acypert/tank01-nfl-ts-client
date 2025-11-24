@@ -6,36 +6,68 @@ export interface Player {
   playerID: string;
   /** Player's full name */
   longName: string;
-  /** Player's first name */
-  firstName?: string | undefined;
-  /** Player's last name */
-  lastName?: string | undefined;
   /** Player's jersey number */
-  jerseyNum?: string | undefined;
+  jerseyNum: string;
   /** Player's position (e.g., "QB", "RB", "WR") */
   pos: string;
   /** Player's team abbreviation */
   team: string;
-  /** Player's team ID */
-  teamID?: string | undefined;
   /** Player's height in inches */
-  height?: string | undefined;
+  height: string;
   /** Player's weight in pounds */
-  weight?: string | undefined;
+  weight: string;
   /** Player's date of birth */
-  bDay?: string | undefined;
+  bDay: string;
   /** Player's college */
-  college?: string | undefined;
-  /** Player's draft year */
-  draftYear?: string | undefined;
-  /** Player's draft round */
-  draftRound?: string | undefined;
-  /** Player's draft pick number */
-  draftPick?: string | undefined;
+  school: string;
   /** Player's experience/years in NFL */
-  exp?: string | undefined;
+  exp: string;
   /** Player's injury status */
-  injury?: PlayerInjury | undefined;
+  injury: PlayerInjury;
+  /** Player's age */
+  age: string;
+  /** ESPN ID */
+  espnID: string;
+  /** ESPN name */
+  espnName: string;
+  /** ESPN link */
+  espnLink: string;
+  /** ESPN headshot */
+  espnHeadshot: string;
+  /** ESPN ID full */
+  espnIDFull: string;
+  /** CBS player ID */
+  cbsPlayerID: string;
+  /** CBS long name */
+  cbsLongName: string;
+  /** CBS short name */
+  cbsShortName: string;
+  /** CBS player ID full */
+  cbsPlayerIDFull: string;
+  /** Yahoo player ID */
+  yahooPlayerID: string;
+  /** Yahoo link */
+  yahooLink: string;
+  /** Sleeper bot ID */
+  sleeperBotID: string;
+  /** FanSided reference ID */
+  fRefID: string;
+  /** RotoWire player ID */
+  rotoWirePlayerID: string;
+  /** RotoWire player ID full */
+  rotoWirePlayerIDFull: string;
+  /** FantasyPros link */
+  fantasyProsLink: string;
+  /** FantasyPros player ID */
+  fantasyProsPlayerID: string;
+  /** Last game played */
+  lastGamePlayed: string;
+  /** Is free agent */
+  isFreeAgent: string;
+  /** First seen */
+  firstSeen: string;
+  /** Team ID */
+  teamID: string;
 }
 
 /**
@@ -43,11 +75,13 @@ export interface Player {
  */
 export interface PlayerInjury {
   /** Injury designation (e.g., "Questionable", "Out", "IR") */
-  designation?: string | undefined;
+  designation: string;
   /** Description of the injury */
-  description?: string | undefined;
+  description: string;
   /** Injury date */
-  injDate?: string | undefined;
+  injDate: string;
+  /** Injury return date */
+  injReturnDate: string;
 }
 
 /**
@@ -146,23 +180,80 @@ export interface GetGamesForPlayerOptions {
 /**
  * Player game log entry
  */
-export interface PlayerGameLog {
-  /** Game ID */
-  gameID: string;
-  /** Player ID */
+export type PlayerGameLog = Record<string, PlayerGame>;
+
+export interface PlayerGame {
+  Defense?: DefenseStats | undefined;
+  Passing?: PassingStats | undefined;
+  Receiving?: ReceivingStats | undefined;
+  Rushing?: RushingStats | undefined;
+  longName: string;
   playerID: string;
-  /** Season */
-  season: string;
-  /** Week */
-  week: string;
-  /** Team abbreviation */
+  scoringPlays?: ScoringPlay[] | undefined;
+  snapCounts?: SnapCounts | undefined;
   team: string;
-  /** Opponent team abbreviation */
-  opponent: string;
-  /** Game date */
-  gameDate: string;
-  /** Statistics for the game */
-  stats: Record<string, unknown>;
-  /** Fantasy points (if fantasyPoints: true) */
-  fantasyPoints?: number | undefined;
+  teamAbv: string;
+  teamID: string;
+  gameID: string;
+}
+
+export interface DefenseStats {
+  fumblesLost?: string | undefined;
+  defensiveInterceptions: string;
+  forcedFumbles: string;
+  fumbles?: string | undefined;
+  fumblesRecovered?: string | undefined;
+}
+
+export interface PassingStats {
+  qbr: string;
+  rtg: string;
+  sacked: string;
+  passAttempts: string;
+  passAvg: string;
+  passTD: string;
+  passYds: string;
+  int: string;
+  passCompletions: string;
+  passingTwoPointConversion?: string | undefined;
+}
+
+export interface ReceivingStats {
+  receptions: string;
+  recTD: string;
+  longRec: string;
+  targets: string;
+  recYds: string;
+  recAvg: string;
+}
+
+export interface RushingStats {
+  rushAvg: string;
+  rushYds: string;
+  carries: string;
+  longRush: string;
+  rushTD: string;
+  rushingTwoPointConversion?: string | undefined;
+}
+
+export interface ScoringPlay {
+  score: string;
+  scorePeriod: string;
+  homeScore: string;
+  awayScore: string;
+  teamID: string;
+  scoreDetails: string;
+  scoreType: string;
+  scoreTime: string;
+  team: string;
+  playerIDs: string[];
+}
+
+export interface SnapCounts {
+  offSnapPct: string;
+  defSnap: string;
+  stSnap: string;
+  stSnapPct: string;
+  offSnap: string;
+  defSnapPct: string;
 }

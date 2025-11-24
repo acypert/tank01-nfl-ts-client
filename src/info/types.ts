@@ -29,6 +29,11 @@ export interface CurrentInfo {
   season: string;
 
   /**
+   * Current date (YYYYMMDD format)
+   */
+  currentDate: string;
+
+  /**
    * Current week number
    */
   week: string;
@@ -36,15 +41,5 @@ export interface CurrentInfo {
   /**
    * Season type: "pre" (preseason), "reg" (regular), "post" (playoffs)
    */
-  seasonType: 'pre' | 'reg' | 'post';
-
-  /**
-   * Current date (YYYYMMDD format)
-   */
-  date?: string | undefined;
-
-  /**
-   * Additional metadata
-   */
-  [key: string]: unknown;
+  seasonType: 'pre' | 'reg' | 'post' | string;
 }

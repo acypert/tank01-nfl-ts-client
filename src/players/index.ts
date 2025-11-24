@@ -5,7 +5,7 @@ export type {
   PlayerSearchFilters,
   GetPlayerInfoOptions,
   GetGamesForPlayerOptions,
-  PlayerGameLog,
+  PlayerGame,
 } from './types.js';
 export {
   PlayerSchema,
@@ -13,6 +13,6 @@ export {
   PlayersResponseSchema,
   GetPlayerInfoOptionsSchema,
   GetGamesForPlayerOptionsSchema,
-  PlayerGameLogSchema,
+  PlayerGameSchema,
   PlayerGameLogsResponseSchema,
 } from './schemas.js';

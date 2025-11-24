@@ -33,9 +33,9 @@ import { LiveBoxScoreSchema } from './live/schemas.js';
 import type {
   ADPType,
   GetADPOptions,
-  PlayerADP,
+  ADPResponse,
   GetProjectionsOptions,
-  PlayerProjection,
+  ProjectionsResponse,
   GetDFSOptions,
   DFSPlayer,
 } from './fantasy/types.js';
@@ -415,7 +415,7 @@ export class Tank01Client {
    * @param options.itemFormat - Response format: "map" or "list"
    * @param options.numberOfGames - Number of games to return
    * @param options.fantasyPoints - Include fantasy points (defaults to false when omitted)
-   * @returns Array of player game logs
+   * @returns Player game logs (Record format)
    * @throws {Tank01NotFoundError} Player or games not found
    * @throws {Tank01AuthenticationError} Invalid API key
    *
@@ -429,7 +429,7 @@ export class Tank01Client {
    * console.log(gameLogs[0].stats.passingYards);
    * ```
    */
-  async getNFLGamesForPlayer(options: GetGamesForPlayerOptions): Promise<PlayerGameLog[]> {
+  async getNFLGamesForPlayer(options: GetGamesForPlayerOptions): Promise<PlayerGameLog> {
     const params: Record<string, string | boolean | number> = {
       playerID: options.playerID,
     };
@@ -440,7 +440,7 @@ export class Tank01Client {
     if (options.numberOfGames) params.numberOfGames = options.numberOfGames;
     if (options.fantasyPoints !== undefined) params.fantasyPoints = options.fantasyPoints;
 
-    const response = await this.httpClient.get<{ body: PlayerGameLog[] }>(
+    const response = await this.httpClient.get<{ body: PlayerGameLog }>(
       '/getNFLGamesForPlayer',
       params
     );
@@ -696,9 +696,6 @@ export class Tank01Client {
    *   playByPlay: true,
    *   fantasyPoints: true
    * });
-   *
-   * // Old signature still supported
-   * const score = await client.getNFLBoxScore("20240908_SF@PIT");
    * ```
    */
   async getNFLBoxScore(options: GetBoxScoreOptions | string): Promise<LiveBoxScore> {
@@ -763,7 +760,7 @@ export class Tank01Client {
    * @param options.adpDate - Historical ADP date (format: YYYYMMDD)
    * @param options.pos - Position filter (e.g., "QB", "RB", "WR")
    * @param options.filterOut - Comma-separated list of players to exclude
-   * @returns Array of player ADP data
+   * @returns ADP response object with player data
    * @throws {Tank01AuthenticationError} Invalid API key
    * @throws {Tank01ValidationError} Invalid adpType or parameters
    *
@@ -784,7 +781,7 @@ export class Tank01Client {
   async getNFLADP(
     adpType: ADPType,
     options?: Omit<GetADPOptions, 'adpType'>
-  ): Promise<PlayerADP[]> {
+  ): Promise<ADPResponse> {
     const params: Record<string, string> = {
       adpType,
     };
@@ -795,7 +792,7 @@ export class Tank01Client {
       if (options.filterOut) params.filterOut = options.filterOut;
     }
 
-    const response = await this.httpClient.get<{ body: PlayerADP[] }>('/getNFLADP', params);
+    const response = await this.httpClient.get<{ body: ADPResponse }>('/getNFLADP', params);
     const validated = validateResponse(response, ADPResponseSchema);
     return validated.body;
   }
@@ -811,7 +808,7 @@ export class Tank01Client {
    * @param options.teamID - Team abbreviation filter
    * @param options.archiveSeason - Season year (e.g., "2023")
    * @param options.itemFormat - Response format: "map" or "list"
-   * @returns Array of player projections
+   * @returns Projections response object with player and team defense projections
    * @throws {Tank01AuthenticationError} Invalid API key
    *
    * @example
@@ -831,7 +828,7 @@ export class Tank01Client {
    * });
    * ```
    */
-  async getNFLProjections(options?: GetProjectionsOptions): Promise<PlayerProjection[]> {
+  async getNFLProjections(options?: GetProjectionsOptions): Promise<ProjectionsResponse> {
     const params: Record<string, string> = {};
 
     if (options) {
@@ -842,7 +839,7 @@ export class Tank01Client {
       if (options.itemFormat) params.itemFormat = options.itemFormat;
     }
 
-    const response = await this.httpClient.get<{ body: PlayerProjection[] }>(
+    const response = await this.httpClient.get<{ body: ProjectionsResponse }>(
       '/getNFLProjections',
       Object.keys(params).length > 0 ? params : undefined
     );
@@ -856,7 +853,7 @@ export class Tank01Client {
    * @param date - Date for DFS data (required, format: YYYYMMDD)
    * @param options - Optional parameters
    * @param options.includeTeamDefense - Include team defense/special teams
-   * @returns Array of DFS player data with salaries
+   * @returns DFS player data with salaries
    * @throws {Tank01AuthenticationError} Invalid API key
    * @throws {Tank01ValidationError} Invalid date format
    *
@@ -871,7 +868,7 @@ export class Tank01Client {
    * });
    * ```
    */
-  async getNFLDFS(date: string, options?: Omit<GetDFSOptions, 'date'>): Promise<DFSPlayer[]> {
+  async getNFLDFS(date: string, options?: Omit<GetDFSOptions, 'date'>): Promise<DFSPlayer> {
     const params: Record<string, string | boolean> = {
       date,
     };
@@ -880,7 +877,7 @@ export class Tank01Client {
       params.includeTeamDefense = options.includeTeamDefense;
     }
 
-    const response = await this.httpClient.get<{ body: DFSPlayer[] }>('/getNFLDFS', params);
+    const response = await this.httpClient.get<{ body: DFSPlayer }>('/getNFLDFS', params);
     const validated = validateResponse(response, DFSResponseSchema);
     return validated.body;
   }
@@ -901,7 +898,7 @@ export class Tank01Client {
    * @param options.impliedTotals - Include implied totals from odds
    * @param options.playerProps - Include player prop bets
    * @param options.playerID - Filter player props by specific player
-   * @returns Array of game odds from multiple sportsbooks
+   * @returns Game odds from multiple sportsbooks (Record format)
    * @throws {TypeError} If neither gameDate nor gameID provided, or if both provided
    * @throws {Tank01AuthenticationError} Invalid API key
    * @throws {Tank01ValidationError} Invalid parameter format
@@ -927,7 +924,7 @@ export class Tank01Client {
    * });
    * ```
    */
-  async getNFLBettingOdds(options: GetBettingOddsOptions): Promise<GameOdds[]> {
+  async getNFLBettingOdds(options: GetBettingOddsOptions): Promise<GameOdds> {
     // Validate OR requirement: exactly one of gameDate or gameID
     validateOneOf(['gameDate', 'gameID'], options as Record<string, unknown>, 'getNFLBettingOdds');
 
@@ -944,7 +941,7 @@ export class Tank01Client {
     if (options.playerProps !== undefined) params.playerProps = options.playerProps;
     if (options.playerID) params.playerID = options.playerID;
 
-    const response = await this.httpClient.get<{ body: GameOdds[] }>('/getNFLBettingOdds', params);
+    const response = await this.httpClient.get<{ body: GameOdds }>('/getNFLBettingOdds', params);
     const validated = validateResponse(response, BettingOddsResponseSchema);
     return validated.body;
   }
@@ -964,7 +961,7 @@ export class Tank01Client {
    * @param options.fantasyNews - Get fantasy-relevant news only
    * @param options.recentNews - Get most recent news only
    * @param options.maxItems - Maximum number of articles to return
-   * @returns Array of news articles
+   * @returns News articles
    * @throws {Tank01AuthenticationError} Invalid API key
    *
    * @example
@@ -978,15 +975,9 @@ export class Tank01Client {
    *   recentNews: true,
    *   maxItems: 10
    * });
-   *
-   * // Get fantasy news for a player
-   * const purdyNews = await client.getNFLNews({
-   *   playerID: "4381786",
-   *   fantasyNews: true
-   * });
    * ```
    */
-  async getNFLNews(options?: GetNewsOptions): Promise<NewsArticle[]> {
+  async getNFLNews(options?: GetNewsOptions): Promise<NewsArticle> {
     const params: Record<string, string | boolean | number> = {};
 
     if (options) {
@@ -999,7 +990,7 @@ export class Tank01Client {
       if (options.maxItems !== undefined) params.maxItems = options.maxItems;
     }
 
-    const response = await this.httpClient.get<{ body: NewsArticle[] }>(
+    const response = await this.httpClient.get<{ body: NewsArticle }>(
       '/getNFLNews',
       Object.keys(params).length > 0 ? params : undefined
     );

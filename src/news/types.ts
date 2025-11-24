@@ -51,18 +51,4 @@ export interface GetNewsOptions {
 /**
  * NFL news article
  */
-export interface NewsArticle {
-  id: string;
-  title: string;
-  description?: string | undefined;
-  link?: string | undefined;
-  source?: string | undefined;
-  pubDate?: string | undefined;
-  playerID?: string | undefined;
-  playerName?: string | undefined;
-  teamID?: string | undefined;
-  teamAbv?: string | undefined;
-  category?: string | undefined;
-  tags?: string[] | undefined;
-  [key: string]: unknown;
-}
+export type NewsArticle = unknown[];

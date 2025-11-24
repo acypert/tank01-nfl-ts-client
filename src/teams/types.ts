@@ -1,3 +1,5 @@
+import type { Player } from '../players/types.js';
+
 /**
  * NFL Team entity
  */
@@ -11,17 +13,34 @@ export interface Team {
   /** Team abbreviation */
   teamAbv: string;
   /** Conference: "AFC" or "NFC" */
-  conference: 'AFC' | 'NFC';
+  conference: 'AFC' | 'NFC' | 'American Football Conference' | 'National Football Conference';
   /** Division: "North", "South", "East", or "West" */
   division: 'North' | 'South' | 'East' | 'West';
   /** Season wins */
-  wins?: number | undefined;
+  wins: string;
   /** Season losses */
-  losses?: number | undefined;
+  loss: string;
   /** Season ties */
-  ties?: number | undefined;
+  tie: string;
   /** Current season year */
   seasonYear?: string | undefined;
+  /** Roster of players on the team */
+  Roster?: Record<string, Player> | undefined;
+  /** Points For */
+  pf: string;
+  /** Points Against */
+  pa: string;
+  /** Bye weeks by year */
+  byeWeeks: Record<string, string[]>;
+  /** ESPN Logo */
+  espnLogo1: string;
+  /** NFL.com Logo */
+  nflComLogo1: string;
+  /** Current Streak */
+  currentStreak: {
+    result: string;
+    length: string;
+  };
 }
 
 /**
@@ -65,14 +84,12 @@ export interface GetTeamRosterOptions {
  * Depth chart position entry
  */
 export interface DepthChartPosition {
+  /** Depth position */
+  depthPosition: string;
   /** Player ID */
   playerID: string;
   /** Player name */
-  playerName: string;
-  /** Position on depth chart (1 = starter, 2 = backup, etc.) */
-  depth: number;
-  /** Position abbreviation (e.g., "QB", "RB") */
-  position: string;
+  longName: string;
 }
 
 /**
@@ -81,10 +98,8 @@ export interface DepthChartPosition {
 export interface DepthChart {
   /** Team abbreviation */
   teamAbv: string;
-  /** Team name */
-  teamName: string;
+  /** Team ID */
+  teamID: string;
   /** Depth chart positions by position group */
   depthChart: Record<string, DepthChartPosition[]>;
-  /** Last updated timestamp */
-  lastUpdated?: string | undefined;
 }

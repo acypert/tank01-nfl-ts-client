@@ -1,4 +1,5 @@
-import fetch, { type RequestInit, type Response } from 'node-fetch';
+
+import type { RequestInit, Response } from 'node-fetch';
 import type { ResolvedClientConfiguration } from '../config/types.js';
 import { Logger } from '../utils/logger.js';
 import { retryWithBackoff } from './retry.js';
@@ -46,6 +47,7 @@ export class HttpClient {
         const timeoutId = setTimeout(() => controller.abort(), this.config.timeout);
 
         try {
+          const fetch = (await import('node-fetch')).default;
           const response = await fetch(url, {
             ...init,
             signal: controller.signal,

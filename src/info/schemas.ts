@@ -21,14 +21,12 @@ export const GetCurrentInfoOptionsSchema = z.object({
 /**
  * Schema for CurrentInfo validation
  */
-export const CurrentInfoSchema = z
-  .object({
-    season: z.string(),
-    week: z.string(),
-    seasonType: z.enum(['pre', 'reg', 'post']),
-    date: z.string().optional(),
-  })
-  .passthrough();
+export const CurrentInfoSchema = z.object({
+  season: z.string(),
+  currentDate: z.string(),
+  week: z.string(),
+  seasonType: z.enum(['pre', 'reg', 'post', 'Final']),
+});
 
 /**
  * Schema for current info response validation

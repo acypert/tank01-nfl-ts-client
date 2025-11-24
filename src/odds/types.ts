@@ -1,12 +1,55 @@
-/**
- * Betting Odds Module - Type Definitions
- *
- * This module provides types for NFL betting odds and lines from multiple sportsbooks.
- */
 
-// ========================================
-// Betting Odds Types
-// ========================================
+export type GameOdds = Record<string, GameOddsInfo>;
+
+export interface GameOddsInfo {
+  awayTeam: string;
+  ballybet: SportsbookOdds;
+  bet365: SportsbookOdds;
+  betmgm: SportsbookOdds;
+  betrivers: SportsbookOdds;
+  caesars_sportsbook: SportsbookOdds;
+  draftkings: SportsbookOdds;
+  espnbet: SportsbookOdds;
+  fanduel: SportsbookOdds;
+  gameDate: string;
+  hardrock: SportsbookOdds;
+  homeTeam: string;
+  last_updated_e_time: string;
+  teamIDAway: string;
+  teamIDHome: string;
+  gameID: string;
+}
+
+/**
+ * Odds from a specific sportsbook
+ */
+export interface SportsbookOdds {
+  totalUnder: string;
+  awayTeamSpread: string;
+  awayTeamSpreadOdds: string;
+  homeTeamSpread: string;
+  homeTeamSpreadOdds: string;
+  totalOverOdds: string;
+  totalUnderOdds: string;
+  awayTeamMLOdds: string;
+  homeTeamMLOdds: string;
+  totalOver: string;
+}
+
+/**
+ * Player prop bet
+ */
+export interface PlayerProp {
+  playerID: string;
+  playerName: string;
+  team: string;
+  propType: string; // e.g., "passingYards", "touchdowns"
+  line?: number | undefined;
+  overOdds?: number | undefined;
+  underOdds?: number | undefined;
+  sportsbook?: string | undefined;
+  [key: string]: unknown;
+}
 
 /**
  * Options for getNFLBettingOdds endpoint
@@ -43,50 +86,4 @@ export interface GetBettingOddsOptions {
    * Filter player props by specific player ID
    */
   playerID?: string | undefined;
-}
-
-/**
- * Sportsbook odds for a specific game
- */
-export interface GameOdds {
-  gameID: string;
-  gameDate: string;
-  away: string;
-  home: string;
-  sportsbooks?: Record<string, SportsbookOdds> | undefined;
-  playerProps?: PlayerProp[] | undefined;
-  [key: string]: unknown;
-}
-
-/**
- * Odds from a specific sportsbook
- */
-export interface SportsbookOdds {
-  name: string;
-  awaySpread?: number | undefined;
-  homeSpread?: number | undefined;
-  awaySpreadOdds?: number | undefined;
-  homeSpreadOdds?: number | undefined;
-  awayMoneyline?: number | undefined;
-  homeMoneyline?: number | undefined;
-  overUnder?: number | undefined;
-  overOdds?: number | undefined;
-  underOdds?: number | undefined;
-  lastUpdated?: string | undefined;
-  [key: string]: unknown;
-}
-
-/**
- * Player prop bet
- */
-export interface PlayerProp {
-  playerID: string;
-  playerName: string;
-  team: string;
-  propType: string; // e.g., "passingYards", "touchdowns"
-  line?: number | undefined;
-  overOdds?: number | undefined;
-  underOdds?: number | undefined;
-  sportsbook?: string | undefined;
-  [key: string]: unknown;
 }

@@ -1,23 +1,35 @@
 import { z } from 'zod';
+import { PlayerSchema } from '../players/schemas.js';
 
 /**
  * Zod schema for Team validation
  */
 export const TeamSchema = z.object({
-  teamID: z
-    .string()
-    .min(2)
-    .max(3)
-    .regex(/^[A-Z]+$/),
+  teamID: z.string(),
   teamName: z.string().min(1),
   teamCity: z.string().min(1),
   teamAbv: z.string().min(2).max(3),
-  conference: z.enum(['AFC', 'NFC']),
+  conference: z.enum([
+    'AFC',
+    'NFC',
+    'American Football Conference',
+    'National Football Conference',
+  ]),
   division: z.enum(['North', 'South', 'East', 'West']),
-  wins: z.number().nonnegative().optional(),
-  losses: z.number().nonnegative().optional(),
-  ties: z.number().nonnegative().optional(),
+  wins: z.string(),
+  loss: z.string(),
+  tie: z.string(),
   seasonYear: z.string().optional(),
+  Roster: z.record(PlayerSchema).optional().or(z.undefined()),
+  pf: z.string(),
+  pa: z.string(),
+  byeWeeks: z.record(z.array(z.string())),
+  espnLogo1: z.string().url(),
+  nflComLogo1: z.string().url(),
+  currentStreak: z.object({
+    result: z.string(),
+    length: z.string(),
+  }),
 });
 
 /**
@@ -60,10 +72,9 @@ export const GetTeamRosterOptionsSchema = z.object({
  * Schema for depth chart position
  */
 export const DepthChartPositionSchema = z.object({
+  depthPosition: z.string(),
   playerID: z.string(),
-  playerName: z.string(),
-  depth: z.number(),
-  position: z.string(),
+  longName: z.string(),
 });
 
 /**
@@ -71,9 +82,8 @@ export const DepthChartPositionSchema = z.object({
  */
 export const DepthChartSchema = z.object({
   teamAbv: z.string(),
-  teamName: z.string(),
+  teamID: z.string(),
   depthChart: z.record(z.array(DepthChartPositionSchema)),
-  lastUpdated: z.string().optional(),
 });
 
 /**

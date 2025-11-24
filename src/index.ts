@@ -17,7 +17,7 @@ export type {
   PlayerSearchFilters,
   GetPlayerInfoOptions,
   GetGamesForPlayerOptions,
-  PlayerGameLog,
+  PlayerGame,
 } from './players/index.js';
 export type {
   Game,
@@ -30,14 +30,7 @@ export type {
   GetGamesForDateOptions,
   GetScoresOnlyOptions,
 } from './games/index.js';
-export type {
-  LiveGame,
-  LiveBoxScore,
-  QuarterScore,
-  LiveTeamStats,
-  LivePlayerStats,
-  PlayByPlayEvent,
-} from './live/index.js';
+export type { LiveBoxScore, Dst, LineScore, LineScoreTeam } from './live/index.js';
 export type {
   ADPType,
   GetADPOptions,
@@ -47,6 +40,6 @@ export type {
   GetDFSOptions,
   DFSPlayer,
 } from './fantasy/index.js';
-export type { GetBettingOddsOptions, GameOdds, SportsbookOdds, PlayerProp } from './odds/index.js';
+export type { GetBettingOddsOptions, GameOdds, SportsbookOdds } from './odds/index.js';
 export type { GetNewsOptions, NewsArticle } from './news/index.js';
 export type { GetCurrentInfoOptions, CurrentInfo } from './info/index.js';

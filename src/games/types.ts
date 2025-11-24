@@ -4,36 +4,38 @@
 export interface Game {
   /** Unique game identifier */
   gameID: string;
-  /** Season year */
-  season: string;
-  /** Game week number */
-  gameWeek: string;
-  /** Game date (ISO format) */
-  gameDate: string;
-  /** Game time */
-  gameTime?: string | undefined;
+  /** Season type */
+  seasonType: string;
   /** Away team abbreviation */
   away: string;
+  /** Game date (YYYYMMDD) */
+  gameDate: string;
+  /** ESPN game ID */
+  espnID: string;
+  /** Home team ID */
+  teamIDHome: string;
+  /** Game status (e.g., "Scheduled", "InProgress", "Final") */
+  gameStatus: string;
+  /** Game week number */
+  gameWeek: string;
+  /** Away team ID */
+  teamIDAway: string;
   /** Home team abbreviation */
   home: string;
-  /** Away team ID */
-  awayTeamID?: string | undefined;
-  /** Home team ID */
-  homeTeamID?: string | undefined;
-  /** Away team score */
-  awayPts?: number | undefined;
-  /** Home team score */
-  homePts?: number | undefined;
-  /** Game status (e.g., "Scheduled", "InProgress", "Final") */
-  gameStatus?: string | undefined;
-  /** Game status code */
-  gameStatusCode?: string | undefined;
-  /** Stadium/venue name */
-  venue?: string | undefined;
+  /** ESPN link */
+  espnLink: string;
+  /** CBS link */
+  cbsLink: string;
+  /** Game time */
+  gameTime: string;
+  /** Game time epoch */
+  gameTime_epoch: string;
+  /** Season year */
+  season: string;
   /** Neutral site flag */
-  neutralSite?: boolean | undefined;
-  /** Playoff game flag */
-  playoffs?: boolean | undefined;
+  neutralSite: string;
+  /** Game status code */
+  gameStatusCode: string;
 }
 
 /**

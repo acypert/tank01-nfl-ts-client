@@ -23,58 +23,44 @@ export const GetBettingOddsOptionsSchema = z.object({
   playerID: z.string().optional(),
 });
 
-/**
- * Schema for SportsbookOdds validation
- */
-export const SportsbookOddsSchema = z
-  .object({
-    name: z.string(),
-    awaySpread: z.number().optional(),
-    homeSpread: z.number().optional(),
-    awaySpreadOdds: z.number().optional(),
-    homeSpreadOdds: z.number().optional(),
-    awayMoneyline: z.number().optional(),
-    homeMoneyline: z.number().optional(),
-    overUnder: z.number().optional(),
-    overOdds: z.number().optional(),
-    underOdds: z.number().optional(),
-    lastUpdated: z.string().optional(),
-  })
-  .passthrough();
-
-/**
- * Schema for PlayerProp validation
- */
-export const PlayerPropSchema = z
-  .object({
-    playerID: z.string(),
-    playerName: z.string(),
-    team: z.string(),
-    propType: z.string(),
-    line: z.number().optional(),
-    overOdds: z.number().optional(),
-    underOdds: z.number().optional(),
-    sportsbook: z.string().optional(),
-  })
-  .passthrough();
+export const SportsbookOddsSchema = z.object({
+  totalUnder: z.string(),
+  awayTeamSpread: z.string(),
+  awayTeamSpreadOdds: z.string(),
+  homeTeamSpread: z.string(),
+  homeTeamSpreadOdds: z.string(),
+  totalOverOdds: z.string(),
+  totalUnderOdds: z.string(),
+  awayTeamMLOdds: z.string(),
+  homeTeamMLOdds: z.string(),
+  totalOver: z.string(),
+});
 
 /**
  * Schema for GameOdds validation
  */
-export const GameOddsSchema = z
-  .object({
-    gameID: z.string(),
-    gameDate: z.string(),
-    away: z.string(),
-    home: z.string(),
-    sportsbooks: z.record(SportsbookOddsSchema).optional(),
-    playerProps: z.array(PlayerPropSchema).optional(),
-  })
-  .passthrough();
+export const GameOddsSchema = z.object({
+  awayTeam: z.string(),
+  ballybet: SportsbookOddsSchema,
+  bet365: SportsbookOddsSchema,
+  betmgm: SportsbookOddsSchema,
+  betrivers: SportsbookOddsSchema,
+  caesars_sportsbook: SportsbookOddsSchema,
+  draftkings: SportsbookOddsSchema,
+  espnbet: SportsbookOddsSchema,
+  fanduel: SportsbookOddsSchema,
+  gameDate: z.string(),
+  hardrock: SportsbookOddsSchema,
+  homeTeam: z.string(),
+  last_updated_e_time: z.string(),
+  teamIDAway: z.string(),
+  teamIDHome: z.string(),
+  gameID: z.string(),
+});
 
 /**
  * Schema for betting odds response validation
  */
 export const BettingOddsResponseSchema = z.object({
-  body: z.array(GameOddsSchema),
+  body: z.record(GameOddsSchema),
 });

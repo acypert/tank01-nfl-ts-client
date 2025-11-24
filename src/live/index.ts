@@ -1,9 +1,2 @@
-export type {
-  LiveGame,
-  LiveBoxScore,
-  QuarterScore,
-  LiveTeamStats,
-  LivePlayerStats,
-  PlayByPlayEvent,
-} from './types.js';
-export { LiveGameSchema, LiveBoxScoreSchema, PlayByPlayEventSchema } from './schemas.js';
+export type { LiveBoxScore, Dst, LineScore, LineScoreTeam } from './types.js';
+export { DstSchema, LineScoreSchema, LineScoreTeamSchema, LiveBoxScoreSchema } from './schemas.js';

@@ -24,26 +24,11 @@ export const GetNewsOptionsSchema = z.object({
 /**
  * Schema for NewsArticle validation
  */
-export const NewsArticleSchema = z
-  .object({
-    id: z.string(),
-    title: z.string(),
-    description: z.string().optional(),
-    link: z.string().optional(),
-    source: z.string().optional(),
-    pubDate: z.string().optional(),
-    playerID: z.string().optional(),
-    playerName: z.string().optional(),
-    teamID: z.string().optional(),
-    teamAbv: z.string().optional(),
-    category: z.string().optional(),
-    tags: z.array(z.string()).optional(),
-  })
-  .passthrough();
+export const NewsArticleSchema = z.array(z.unknown());
 
 /**
  * Schema for news response validation
  */
 export const NewsResponseSchema = z.object({
-  body: z.array(NewsArticleSchema),
+  body: NewsArticleSchema,
 });

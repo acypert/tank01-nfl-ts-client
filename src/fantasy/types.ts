@@ -53,14 +53,21 @@ export interface GetADPOptions {
  * Player ADP data
  */
 export interface PlayerADP {
+  posADP: string;
+  overallADP: string;
   playerID: string;
-  playerName: string;
-  team: string;
-  pos: string;
-  adp: number;
-  adpFormatted?: string | undefined;
-  bye?: string | number | undefined;
-  [key: string]: unknown;
+  longName: string;
+  teamAbv?: string | undefined;
+  teamID?: string | undefined;
+}
+
+/**
+ * ADP Response
+ */
+export interface ADPResponse {
+  adpDate: string;
+  adpType: string;
+  adpList: PlayerADP[];
 }
 
 // ========================================
@@ -102,15 +109,71 @@ export interface GetProjectionsOptions {
  * Player projection data
  */
 export interface PlayerProjection {
-  playerID: string;
-  playerName: string;
-  team: string;
+  twoPointConversion: string;
+  Rushing: RushingProjection;
+  Passing: PassingProjection;
+  Receiving: ReceivingProjection;
+  fumblesLost: string;
   pos: string;
-  week?: string | undefined;
-  season?: string | undefined;
-  projectedPoints?: number | undefined;
-  projections?: Record<string, number | string> | undefined;
-  [key: string]: unknown;
+  teamID: string;
+  team: string;
+  longName: string;
+  playerID: string;
+  fantasyPointsDefault: FantasyPoints;
+  Kicking?: KickingProjection | undefined;
+}
+
+export interface RushingProjection {
+  rushYds: string;
+  carries: string;
+  rushTD: string;
+}
+
+export interface PassingProjection {
+  passAttempts: string;
+  passTD: string;
+  passYds: string;
+  int: string;
+  passCompletions: string;
+}
+
+export interface ReceivingProjection {
+  receptions: string;
+  recTD: string;
+  targets: string;
+  recYds: string;
+}
+
+export interface FantasyPoints {
+  standard: string;
+  PPR: string;
+  halfPPR: string;
+}
+
+export interface KickingProjection {
+  fgMade: string;
+  fgMissed: string;
+  xpMade: string;
+  xpMissed: string;
+}
+
+export interface ProjectionsResponse {
+  teamDefenseProjections: Record<string, TeamDefenseProjection>;
+  playerProjections: Record<string, PlayerProjection>;
+}
+
+export interface TeamDefenseProjection {
+  returnTD: string;
+  defTD: string;
+  safeties: string;
+  teamID: string;
+  fumbleRecoveries: string;
+  ptsAgainst: string;
+  teamAbv: string;
+  interceptions: string;
+  sacks: string;
+  blockKick: string;
+  fantasyPointsDefault: string;
 }
 
 // ========================================
@@ -135,14 +198,4 @@ export interface GetDFSOptions {
 /**
  * DFS player data
  */
-export interface DFSPlayer {
-  playerID: string;
-  playerName: string;
-  team: string;
-  pos: string;
-  opponent?: string | undefined;
-  salary?: Record<string, number> | undefined; // DraftKings, FanDuel, Yahoo, etc.
-  projectedPoints?: number | undefined;
-  value?: number | undefined;
-  [key: string]: unknown;
-}
+export type DFSPlayer = unknown[];

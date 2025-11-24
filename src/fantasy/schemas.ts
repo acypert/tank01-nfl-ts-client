@@ -29,23 +29,24 @@ export const GetADPOptionsSchema = z.object({
 /**
  * Schema for PlayerADP validation
  */
-export const PlayerADPSchema = z
-  .object({
-    playerID: z.string(),
-    playerName: z.string(),
-    team: z.string(),
-    pos: z.string(),
-    adp: z.number(),
-    adpFormatted: z.string().optional(),
-    bye: z.union([z.string(), z.number()]).optional(),
-  })
-  .passthrough();
+export const PlayerADPSchema = z.object({
+  posADP: z.string(),
+  overallADP: z.string(),
+  playerID: z.string(),
+  longName: z.string(),
+  teamAbv: z.string().optional(),
+  teamID: z.string().optional(),
+});
 
 /**
  * Schema for ADP response validation
  */
 export const ADPResponseSchema = z.object({
-  body: z.array(PlayerADPSchema),
+  body: z.object({
+    adpDate: z.string(),
+    adpType: z.string(),
+    adpList: z.array(PlayerADPSchema),
+  }),
 });
 
 // ========================================
@@ -63,27 +64,80 @@ export const GetProjectionsOptionsSchema = z.object({
   itemFormat: z.enum(['map', 'list']).optional(),
 });
 
+export const RushingProjectionSchema = z.object({
+  rushYds: z.string(),
+  carries: z.string(),
+  rushTD: z.string(),
+});
+
+export const PassingProjectionSchema = z.object({
+  passAttempts: z.string(),
+  passTD: z.string(),
+  passYds: z.string(),
+  int: z.string(),
+  passCompletions: z.string(),
+});
+
+export const ReceivingProjectionSchema = z.object({
+  receptions: z.string(),
+  recTD: z.string(),
+  targets: z.string(),
+  recYds: z.string(),
+});
+
+export const FantasyPointsSchema = z.object({
+  standard: z.string(),
+  PPR: z.string(),
+  halfPPR: z.string(),
+});
+
+export const KickingProjectionSchema = z.object({
+  fgMade: z.string(),
+  fgMissed: z.string(),
+  xpMade: z.string(),
+  xpMissed: z.string(),
+});
+
 /**
  * Schema for PlayerProjection validation
  */
-export const PlayerProjectionSchema = z
-  .object({
-    playerID: z.string(),
-    playerName: z.string(),
-    team: z.string(),
-    pos: z.string(),
-    week: z.string().optional(),
-    season: z.string().optional(),
-    projectedPoints: z.number().optional(),
-    projections: z.record(z.union([z.number(), z.string()])).optional(),
-  })
-  .passthrough();
+export const PlayerProjectionSchema = z.object({
+  twoPointConversion: z.string(),
+  Rushing: RushingProjectionSchema,
+  Passing: PassingProjectionSchema,
+  Receiving: ReceivingProjectionSchema,
+  fumblesLost: z.string(),
+  pos: z.string(),
+  teamID: z.string(),
+  team: z.string(),
+  longName: z.string(),
+  playerID: z.string(),
+  fantasyPointsDefault: FantasyPointsSchema,
+  Kicking: KickingProjectionSchema.optional(),
+});
+
+export const TeamDefenseProjectionSchema = z.object({
+  returnTD: z.string(),
+  defTD: z.string(),
+  safeties: z.string(),
+  teamID: z.string(),
+  fumbleRecoveries: z.string(),
+  ptsAgainst: z.string(),
+  teamAbv: z.string(),
+  interceptions: z.string(),
+  sacks: z.string(),
+  blockKick: z.string(),
+  fantasyPointsDefault: z.string(),
+});
 
 /**
  * Schema for Projections response validation
  */
 export const ProjectionsResponseSchema = z.object({
-  body: z.array(PlayerProjectionSchema),
+  body: z.object({
+    teamDefenseProjections: z.record(TeamDefenseProjectionSchema),
+    playerProjections: z.record(PlayerProjectionSchema),
+  }),
 });
 
 // ========================================
@@ -101,22 +155,11 @@ export const GetDFSOptionsSchema = z.object({
 /**
  * Schema for DFSPlayer validation
  */
-export const DFSPlayerSchema = z
-  .object({
-    playerID: z.string(),
-    playerName: z.string(),
-    team: z.string(),
-    pos: z.string(),
-    opponent: z.string().optional(),
-    salary: z.record(z.number()).optional(),
-    projectedPoints: z.number().optional(),
-    value: z.number().optional(),
-  })
-  .passthrough();
+export const DFSPlayerSchema = z.array(z.unknown());
 
 /**
  * Schema for DFS response validation
  */
 export const DFSResponseSchema = z.object({
-  body: z.array(DFSPlayerSchema),
+  body: DFSPlayerSchema,
 });
