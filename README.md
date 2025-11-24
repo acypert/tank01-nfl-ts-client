@@ -7,11 +7,14 @@ A production-ready TypeScript client for the Tank01 NFL API, providing comprehen
 
 This package provides a clean, type-safe interface for accessing all Tank01 NFL API endpoints. Built with TypeScript strict mode, featuring comprehensive type definitions, runtime validation with Zod schemas, and a flat interface design for maximum developer experience.
 
-**Version 1.0.0** is production-ready with 21+ validated endpoints, full TypeScript support, and comprehensive documentation.
+**Version 1.0.1** is production-ready with 21+ validated endpoints, full TypeScript support, and comprehensive documentation.
 
 🔗 [Tank01 NFL API Documentation](https://rapidapi.com/tank01/api/tank01-nfl-live-in-game-real-time-statistics-nfl/playground)
 
 ## Recent Updates
+
+### Version 1.0.1
+- 📃 Updated README with latest changes
 
 ### Version 1.0.0 (Production Release) 🎉
 - ✅ **Production Ready**: Stable API with comprehensive testing
