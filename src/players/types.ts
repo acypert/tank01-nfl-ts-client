@@ -38,7 +38,7 @@ export interface GetPlayerInfoOptions {
   playerName?: string;
   /** Player ID (e.g., "4381786") - use this OR playerName */
   playerID?: string;
-  /** Include player statistics in response */
+  /** Include player statistics for the current season in response */
   getStats?: boolean;
 }
 

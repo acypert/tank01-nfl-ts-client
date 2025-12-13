@@ -1,9 +1,9 @@
 import type { ClientConfiguration, ResolvedClientConfiguration } from './common/config/types.js';
 import { loadConfiguration } from './common/config/loader.js';
 import { HttpClient } from './common/http/client.js';
-import { validateResponse } from './common/http/validator.js';
 import { validateOneOf } from './common/validation/parameters.js';
 import { Tank01NotFoundError } from './common/errors/not-found.js';
+import type { Tank01Response } from './types/index.js';
 import type {
   Team,
   GetNFLTeamsOptions,
@@ -11,12 +11,6 @@ import type {
   DepthChart,
   RosterPlayer,
 } from './teams/types.js';
-import {
-  TeamSchema,
-  TeamsResponseSchema,
-  DepthChartsResponseSchema,
-  TeamRosterResponseSchema,
-} from './teams/schemas.js';
 import type {
   Player,
   PlayerSearchFilters,
@@ -24,11 +18,6 @@ import type {
   GetGamesForPlayerOptions,
   PlayerGameLog,
 } from './players/types.js';
-import {
-  PlayerSchema,
-  PlayersResponseSchema,
-  PlayerGameLogsResponseSchema,
-} from './players/schemas.js';
 import type {
   Game,
   GameDetails,
@@ -38,9 +27,7 @@ import type {
   GetGamesForDateOptions,
   GetScoresOnlyOptions,
 } from './games/types.js';
-import { GameDetailsSchema, GamesResponseSchema } from './games/schemas.js';
 import type { LiveBoxScore } from './live/types.js';
-import { LiveBoxScoreSchema } from './live/schemas.js';
 import type {
   ADPType,
   GetADPOptions,
@@ -50,17 +37,10 @@ import type {
   GetDFSOptions,
   DFSPlayer,
 } from './fantasy/types.js';
-import {
-  ADPResponseSchema,
-  ProjectionsResponseSchema,
-  DFSResponseSchema,
-} from './fantasy/schemas.js';
 import type { GetBettingOddsOptions, BettingOddsResponse } from './odds/types.js';
-import { BettingOddsResponseSchema } from './odds/schemas.js';
 import type { GetNewsOptions, NewsArticle } from './news/types.js';
-import { NewsResponseSchema } from './news/schemas.js';
 import type { CurrentInfo } from './info/types.js';
-import { CurrentInfoResponseSchema } from './info/schemas.js';
+import { Tank01ValidationError } from './common/index.js';
 
 /**
  * Main Tank01 NFL API client with flat interface
@@ -144,7 +124,7 @@ export class Tank01Client {
    * });
    * ```
    */
-  async getNFLTeams(options?: GetNFLTeamsOptions): Promise<Team[]> {
+  async getNFLTeams(options?: GetNFLTeamsOptions): Promise<Tank01Response<Team[]>> {
     const params: Record<string, string | boolean> = {};
 
     if (options) {
@@ -157,12 +137,11 @@ export class Tank01Client {
       if (options.standingsSeason) params.standingsSeason = options.standingsSeason;
     }
 
-    const response = await this.httpClient.get<{ body: Team[] }>(
+    const response = await this.httpClient.get<Team[]>(
       '/getNFLTeams',
       Object.keys(params).length > 0 ? params : undefined
     );
-    const validated = validateResponse(response, TeamsResponseSchema);
-    return validated.body;
+    return response;
   }
 
   /**
@@ -180,7 +159,7 @@ export class Tank01Client {
    * console.log(niners.teamName); // "San Francisco 49ers"
    * ```
    */
-  async getNFLTeam(teamID: string): Promise<Team> {
+  async getNFLTeam(teamID: string): Promise<Tank01Response<Team>> {
     // Validate teamID format
     if (!teamID || teamID.length < 2 || teamID.length > 3) {
       throw new Tank01NotFoundError(
@@ -189,7 +168,7 @@ export class Tank01Client {
     }
 
     const teams = await this.getNFLTeams();
-    const team = teams.find(
+    const team = teams.body.find(
       (t) => t.teamID === teamID.toUpperCase() || t.teamAbv === teamID.toUpperCase()
     );
 
@@ -197,7 +176,11 @@ export class Tank01Client {
       throw new Tank01NotFoundError(`Team not found: ${teamID}`);
     }
 
-    return validateResponse(team, TeamSchema);
+    return {
+      statusCode: teams.statusCode,
+      body: team,
+      ...(teams.error ? { error: teams.error } : {}),
+    };
   }
 
   /**
@@ -232,7 +215,9 @@ export class Tank01Client {
    * });
    * ```
    */
-  async getNFLTeamRoster(options: GetTeamRosterOptions): Promise<RosterPlayer[]> {
+  async getNFLTeamRoster(
+    options: GetTeamRosterOptions
+  ): Promise<Tank01Response<{ team: string; roster: RosterPlayer[] }>> {
     // Validate OR requirement: exactly one of teamID or teamAbv
     validateOneOf(['teamID', 'teamAbv'], options as Record<string, unknown>, 'getNFLTeamRoster');
 
@@ -248,9 +233,12 @@ export class Tank01Client {
     if (options.getStats !== undefined) params.getStats = options.getStats;
     if (options.fantasyPoints !== undefined) params.fantasyPoints = options.fantasyPoints;
 
-    const response = await this.httpClient.get('/getNFLTeamRoster', params);
-    const validated = validateResponse(response, TeamRosterResponseSchema);
-    return validated.body.roster;
+    const response = await this.httpClient.get<{ team: string; roster: RosterPlayer[] }>(
+      '/getNFLTeamRoster',
+      params
+    );
+
+    return response;
   }
 
   /**
@@ -271,10 +259,9 @@ export class Tank01Client {
    * console.log(sfDepth.depthChart.QB); // QB depth chart
    * ```
    */
-  async getNFLDepthCharts(): Promise<DepthChart[]> {
-    const response = await this.httpClient.get<{ body: DepthChart[] }>('/getNFLDepthCharts');
-    const validated = validateResponse(response, DepthChartsResponseSchema);
-    return validated.body;
+  async getNFLDepthCharts(): Promise<Tank01Response<DepthChart[]>> {
+    const response = await this.httpClient.get<DepthChart[]>('/getNFLDepthCharts');
+    return response;
   }
 
   // ========================================
@@ -294,10 +281,9 @@ export class Tank01Client {
    * console.log(players.length); // 4500+
    * ```
    */
-  async getNFLPlayerList(): Promise<Player[]> {
-    const response = await this.httpClient.get<{ body: Player[] }>('/getNFLPlayerList');
-    const validated = validateResponse(response, PlayersResponseSchema);
-    return validated.body;
+  async getNFLPlayerList(): Promise<Tank01Response<Player[]>> {
+    const response = await this.httpClient.get<Player[]>('/getNFLPlayerList');
+    return response;
   }
 
   /**
@@ -327,7 +313,7 @@ export class Tank01Client {
    * });
    * ```
    */
-  async getNFLPlayerInfo(options: GetPlayerInfoOptions): Promise<Player> {
+  async getNFLPlayerInfo(options: GetPlayerInfoOptions): Promise<Tank01Response<Player | Player[]>> {
     // Validate OR requirement: exactly one of playerName or playerID
     validateOneOf(
       ['playerName', 'playerID'],
@@ -347,25 +333,12 @@ export class Tank01Client {
       params.getStats = options.getStats;
     }
 
-    const response = await this.httpClient.get<{ body: Player[] }>('/getNFLPlayerList');
-    const validated = validateResponse(response, PlayersResponseSchema);
+    const response = await this.httpClient.get<Player[]>(
+      '/getNFLPlayerInfo',
+      Object.keys(params).length > 0 ? params : undefined
+    );
 
-    // Find player by ID or name
-    const player = validated.body.find((p) => {
-      if (options.playerID) {
-        return p.playerID === options.playerID;
-      }
-      if (options.playerName) {
-        return p.longName.toLowerCase() === options.playerName.toLowerCase();
-      }
-      return false;
-    });
-
-    if (!player) {
-      throw new Tank01NotFoundError(`Player not found: ${options.playerName || options.playerID}`);
-    }
-
-    return validateResponse(player, PlayerSchema);
+    return response;
   }
 
   /**
@@ -383,14 +356,14 @@ export class Tank01Client {
    * });
    * ```
    */
-  async searchNFLPlayers(filters?: PlayerSearchFilters): Promise<Player[]> {
+  async searchNFLPlayers(filters?: PlayerSearchFilters): Promise<Tank01Response<Player[]>> {
     const allPlayers = await this.getNFLPlayerList();
 
     if (!filters || Object.keys(filters).length === 0) {
       return allPlayers;
     }
 
-    return allPlayers.filter((player) => {
+    const filteredPlayers = allPlayers.body.filter((player) => {
       if (filters.team && player.team !== filters.team.toUpperCase()) return false;
       if (filters.position && player.pos !== filters.position.toUpperCase()) return false;
       if (filters.name) {
@@ -408,6 +381,12 @@ export class Tank01Client {
       }
       return true;
     });
+
+    return {
+      statusCode: allPlayers.statusCode,
+      body: filteredPlayers,
+      ...(allPlayers.error ? { error: allPlayers.error } : {}),
+    };
   }
 
   /**
@@ -434,7 +413,9 @@ export class Tank01Client {
    * console.log(gameLogs[0].stats.passingYards);
    * ```
    */
-  async getNFLGamesForPlayer(options: GetGamesForPlayerOptions): Promise<PlayerGameLog> {
+  async getNFLGamesForPlayer(
+    options: GetGamesForPlayerOptions
+  ): Promise<Tank01Response<PlayerGameLog>> {
     const params: Record<string, string | boolean | number> = {
       playerID: options.playerID,
     };
@@ -445,17 +426,13 @@ export class Tank01Client {
     if (options.numberOfGames) params.numberOfGames = options.numberOfGames;
     if (options.fantasyPoints !== undefined) params.fantasyPoints = options.fantasyPoints;
 
-    const response = await this.httpClient.get<{ body: PlayerGameLog }>(
-      '/getNFLGamesForPlayer',
-      params
-    );
+    const response = await this.httpClient.get<PlayerGameLog>('/getNFLGamesForPlayer', params);
 
     if (!response || typeof response !== 'object' || !('body' in response)) {
       throw new Tank01NotFoundError(`Game logs not found for player: ${options.playerID}`);
     }
 
-    const validated = validateResponse(response, PlayerGameLogsResponseSchema);
-    return validated.body;
+    return response;
   }
 
   // ========================================
@@ -492,7 +469,7 @@ export class Tank01Client {
   async getNFLGamesForWeek(
     options: GetGamesForWeekOptions | string,
     week?: string
-  ): Promise<Game[]> {
+  ): Promise<Tank01Response<Game[]>> {
     // Support both old (string, string) and new (options object) signatures
     let params: Record<string, string>;
 
@@ -506,9 +483,8 @@ export class Tank01Client {
       if (options.seasonType) params.seasonType = options.seasonType;
     }
 
-    const response = await this.httpClient.get<{ body: Game[] }>('/getNFLGamesForWeek', params);
-    const validated = validateResponse(response, GamesResponseSchema);
-    return validated.body;
+    const response = await this.httpClient.get<Game[]>('/getNFLGamesForWeek', params);
+    return response;
   }
 
   /**
@@ -525,8 +501,8 @@ export class Tank01Client {
    * console.log(game.scoringPlays);
    * ```
    */
-  async getNFLGameInfo(gameID: string): Promise<GameDetails> {
-    const response = await this.httpClient.get<{ body: GameDetails }>('/getNFLGameInfo', {
+  async getNFLGameInfo(gameID: string): Promise<Tank01Response<GameDetails>> {
+    const response = await this.httpClient.get<GameDetails>('/getNFLGameInfo', {
       gameID,
     });
 
@@ -534,7 +510,7 @@ export class Tank01Client {
       throw new Tank01NotFoundError(`Game not found: ${gameID}`);
     }
 
-    return validateResponse((response as { body: GameDetails }).body, GameDetailsSchema);
+    return response;
   }
 
   /**
@@ -552,19 +528,19 @@ export class Tank01Client {
    * console.log(schedule.length); // 17 regular season games
    * ```
    */
-  async getNFLTeamSchedule(teamID: string, season?: string): Promise<Game[]> {
+  async getNFLTeamSchedule(teamID: string, season?: string): Promise<Tank01Response<Game[]>> {
     const params: Record<string, string> = { teamID: teamID.toUpperCase() };
     if (season) {
       params.season = season;
     }
 
-    const response = await this.httpClient.get<{ body: Game[] }>('/getNFLTeamSchedule', params);
+    const response = await this.httpClient.get<Game[]>('/getNFLTeamSchedule', params);
 
     if (!response || typeof response !== 'object' || !('body' in response)) {
       throw new Tank01NotFoundError(`Team schedule not found for: ${teamID}`);
     }
 
-    return (response as { body: Game[] }).body;
+    return response;
   }
 
   /**
@@ -582,19 +558,20 @@ export class Tank01Client {
    * });
    * ```
    */
-  async searchNFLGames(filters?: GameScheduleFilters): Promise<Game[]> {
+  async searchNFLGames(filters?: GameScheduleFilters): Promise<Tank01Response<Game[]>> {
     if (!filters || !filters.season) {
-      throw new Tank01NotFoundError('Season is required for game search');
+      throw new Tank01ValidationError('Season is required for game search');
     }
 
     const currentWeek = filters.week || '1';
-    const allGames = await this.getNFLGamesForWeek(filters.season, currentWeek);
+    const weekGames = await this.getNFLGamesForWeek(filters.season, currentWeek);
+    const allGames = weekGames.body;
 
     if (!filters.team && !filters.status) {
-      return allGames;
+      return weekGames;
     }
 
-    return allGames.filter((game) => {
+    const filteredGames = allGames.filter((game) => {
       if (filters.team) {
         const teamUpper = filters.team.toUpperCase();
         if (game.away !== teamUpper && game.home !== teamUpper) return false;
@@ -607,6 +584,12 @@ export class Tank01Client {
       }
       return true;
     });
+
+    return {
+      statusCode: weekGames.statusCode,
+      body: filteredGames,
+      ...(weekGames.error ? { error: weekGames.error } : {}),
+    };
   }
 
   /**
@@ -624,13 +607,11 @@ export class Tank01Client {
    * console.log(games.map(g => `${g.away} @ ${g.home}`));
    * ```
    */
-  async getNFLGamesForDate(options: GetGamesForDateOptions): Promise<Game[]> {
-    const response = await this.httpClient.get<{ body: Game[] }>('/getNFLGamesForDate', {
+  async getNFLGamesForDate(options: GetGamesForDateOptions): Promise<Tank01Response<Game[]>> {
+    const response = await this.httpClient.get<Game[]>('/getNFLGamesForDate', {
       gameDate: options.gameDate,
     });
-
-    const validated = validateResponse(response, GamesResponseSchema);
-    return validated.body;
+    return response;
   }
 
   /**
@@ -656,7 +637,7 @@ export class Tank01Client {
    * });
    * ```
    */
-  async getNFLScoresOnly(options?: GetScoresOnlyOptions): Promise<Game[]> {
+  async getNFLScoresOnly(options?: GetScoresOnlyOptions): Promise<Tank01Response<Game[]>> {
     const params: Record<string, string | boolean> = {};
 
     if (options) {
@@ -666,13 +647,11 @@ export class Tank01Client {
       if (options.topTeamsOnly !== undefined) params.topTeamsOnly = options.topTeamsOnly;
     }
 
-    const response = await this.httpClient.get<{ body: Game[] }>(
+    const response = await this.httpClient.get<Game[]>(
       '/getNFLScoresOnly',
       Object.keys(params).length > 0 ? params : undefined
     );
-
-    const validated = validateResponse(response, GamesResponseSchema);
-    return validated.body;
+    return response;
   }
 
   // ========================================
@@ -703,7 +682,9 @@ export class Tank01Client {
    * });
    * ```
    */
-  async getNFLBoxScore(options: GetBoxScoreOptions | string): Promise<LiveBoxScore> {
+  async getNFLBoxScore(
+    options: GetBoxScoreOptions | string
+  ): Promise<Tank01Response<LiveBoxScore>> {
     // Support both old (string) and new (options object) signatures
     const params: Record<string, string | boolean> = {};
 
@@ -717,13 +698,13 @@ export class Tank01Client {
       if (options.fantasyPoints !== undefined) params.fantasyPoints = options.fantasyPoints;
     }
 
-    const response = await this.httpClient.get<{ body: LiveBoxScore }>('/getNFLBoxScore', params);
+    const response = await this.httpClient.get<LiveBoxScore>('/getNFLBoxScore', params);
 
     if (!response || typeof response !== 'object' || !('body' in response)) {
       throw new Tank01NotFoundError(`Box score not found for game: ${params.gameID}`);
     }
 
-    return validateResponse((response as { body: LiveBoxScore }).body, LiveBoxScoreSchema);
+    return response;
   }
 
   /**
@@ -744,7 +725,7 @@ export class Tank01Client {
   async isNFLGameLive(gameID: string): Promise<boolean> {
     try {
       const scores = await this.getNFLScoresOnly();
-      const game = scores.find((g) => g.gameID === gameID);
+      const game = scores.body.find((g) => g.gameID === gameID);
       if (!game) return false;
       const status = game.gameStatus?.toLowerCase() || '';
       return status.includes('progress') || status.includes('live');
@@ -786,7 +767,7 @@ export class Tank01Client {
   async getNFLADP(
     adpType: ADPType,
     options?: Omit<GetADPOptions, 'adpType'>
-  ): Promise<ADPResponse> {
+  ): Promise<Tank01Response<ADPResponse>> {
     const params: Record<string, string> = {
       adpType,
     };
@@ -797,9 +778,8 @@ export class Tank01Client {
       if (options.filterOut) params.filterOut = options.filterOut;
     }
 
-    const response = await this.httpClient.get<{ body: ADPResponse }>('/getNFLADP', params);
-    const validated = validateResponse(response, ADPResponseSchema);
-    return validated.body;
+    const response = await this.httpClient.get<ADPResponse>('/getNFLADP', params);
+    return response;
   }
 
   /**
@@ -833,7 +813,9 @@ export class Tank01Client {
    * });
    * ```
    */
-  async getNFLProjections(options?: GetProjectionsOptions): Promise<ProjectionsResponse> {
+  async getNFLProjections(
+    options?: GetProjectionsOptions
+  ): Promise<Tank01Response<ProjectionsResponse>> {
     const params: Record<string, string> = {};
 
     if (options) {
@@ -844,12 +826,11 @@ export class Tank01Client {
       if (options.itemFormat) params.itemFormat = options.itemFormat;
     }
 
-    const response = await this.httpClient.get<{ body: ProjectionsResponse }>(
+    const response = await this.httpClient.get<ProjectionsResponse>(
       '/getNFLProjections',
       Object.keys(params).length > 0 ? params : undefined
     );
-    const validated = validateResponse(response, ProjectionsResponseSchema);
-    return validated.body;
+    return response;
   }
 
   /**
@@ -873,7 +854,10 @@ export class Tank01Client {
    * });
    * ```
    */
-  async getNFLDFS(date: string, options?: Omit<GetDFSOptions, 'date'>): Promise<DFSPlayer> {
+  async getNFLDFS(
+    date: string,
+    options?: Omit<GetDFSOptions, 'date'>
+  ): Promise<Tank01Response<DFSPlayer>> {
     const params: Record<string, string | boolean> = {
       date,
     };
@@ -882,9 +866,8 @@ export class Tank01Client {
       params.includeTeamDefense = options.includeTeamDefense;
     }
 
-    const response = await this.httpClient.get<{ body: DFSPlayer }>('/getNFLDFS', params);
-    const validated = validateResponse(response, DFSResponseSchema);
-    return validated.body;
+    const response = await this.httpClient.get<DFSPlayer>('/getNFLDFS', params);
+    return response;
   }
 
   // ========================================
@@ -929,7 +912,9 @@ export class Tank01Client {
    * });
    * ```
    */
-  async getNFLBettingOdds(options: GetBettingOddsOptions): Promise<BettingOddsResponse> {
+  async getNFLBettingOdds(
+    options: GetBettingOddsOptions
+  ): Promise<Tank01Response<BettingOddsResponse>> {
     // Validate OR requirement: exactly one of gameDate or gameID
     validateOneOf(['gameDate', 'gameID'], options as Record<string, unknown>, 'getNFLBettingOdds');
 
@@ -946,12 +931,8 @@ export class Tank01Client {
     if (options.playerProps !== undefined) params.playerProps = options.playerProps;
     if (options.playerID) params.playerID = options.playerID;
 
-    const response = await this.httpClient.get<{ body: BettingOddsResponse }>(
-      '/getNFLBettingOdds',
-      params
-    );
-    const validated = validateResponse(response, BettingOddsResponseSchema);
-    return validated.body;
+    const response = await this.httpClient.get<BettingOddsResponse>('/getNFLBettingOdds', params);
+    return response;
   }
 
   // ========================================
@@ -985,7 +966,7 @@ export class Tank01Client {
    * });
    * ```
    */
-  async getNFLNews(options?: GetNewsOptions): Promise<NewsArticle> {
+  async getNFLNews(options?: GetNewsOptions): Promise<Tank01Response<NewsArticle>> {
     const params: Record<string, string | boolean | number> = {};
 
     if (options) {
@@ -998,12 +979,11 @@ export class Tank01Client {
       if (options.maxItems !== undefined) params.maxItems = options.maxItems;
     }
 
-    const response = await this.httpClient.get<{ body: NewsArticle }>(
+    const response = await this.httpClient.get<NewsArticle>(
       '/getNFLNews',
       Object.keys(params).length > 0 ? params : undefined
     );
-    const validated = validateResponse(response, NewsResponseSchema);
-    return validated.body;
+    return response;
   }
 
   // ========================================
@@ -1028,19 +1008,18 @@ export class Tank01Client {
    * const historicalInfo = await client.getNFLCurrentInfo("20240908");
    * ```
    */
-  async getNFLCurrentInfo(date?: string): Promise<CurrentInfo> {
+  async getNFLCurrentInfo(date?: string): Promise<Tank01Response<CurrentInfo>> {
     const params: Record<string, string> = {};
 
     if (date) {
       params.date = date;
     }
 
-    const response = await this.httpClient.get<{ body: CurrentInfo }>(
+    const response = await this.httpClient.get<CurrentInfo>(
       '/getNFLCurrentInfo',
       Object.keys(params).length > 0 ? params : undefined
     );
-    const validated = validateResponse(response, CurrentInfoResponseSchema);
-    return validated.body;
+    return response;
   }
 
   /**

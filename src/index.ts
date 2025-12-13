@@ -1,5 +1,6 @@
 export { Tank01Client } from './client.js';
 export type { ClientConfiguration } from './common/config/types.js';
+export type { Tank01Response } from './types/index.js';
 export {
   Tank01Error,
   Tank01AuthenticationError,

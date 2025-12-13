@@ -1,6 +1,6 @@
-
 import type { RequestInit, Response } from 'node-fetch';
 import type { ResolvedClientConfiguration } from '../config/types.js';
+import type { Tank01Response } from '../../types/index.js';
 import { Logger } from '../utils/logger.js';
 import { retryWithBackoff } from './retry.js';
 import {
@@ -29,7 +29,10 @@ export class HttpClient {
    * @param params - Query parameters
    * @returns Parsed JSON response
    */
-  async get<T>(path: string, params?: Record<string, string | number | boolean>): Promise<T> {
+  async get<T>(
+    path: string,
+    params?: Record<string, string | number | boolean>
+  ): Promise<Tank01Response<T>> {
     const url = this.buildUrl(path, params);
     return this.request<T>(url, { method: 'GET' });
   }
@@ -37,7 +40,7 @@ export class HttpClient {
   /**
    * Make an HTTP request with retry logic and error handling
    */
-  private async request<T>(url: string, init: RequestInit): Promise<T> {
+  private async request<T>(url: string, init: RequestInit): Promise<Tank01Response<T>> {
     return retryWithBackoff(
       async () => {
         this.logger.debug(`Making request to ${url}`);
@@ -66,10 +69,28 @@ export class HttpClient {
           await this.handleHttpErrors(response);
 
           // Parse and return JSON
-          const data = (await response.json()) as T;
-          this.logger.debug(`Received response from ${url}`, data);
+          const data = (await response.json()) as unknown;
 
-          return data;
+          const parsedObject = data as Record<string, unknown> | null;
+          const responseBody =
+            parsedObject && typeof parsedObject === 'object' && 'body' in parsedObject
+              ? (parsedObject as { body: unknown }).body
+              : data;
+
+          const errorMessage =
+            parsedObject && typeof parsedObject === 'object' && 'error' in parsedObject
+              ? (parsedObject as { error?: string }).error
+              : undefined;
+
+          const responsePayload: Tank01Response<T> = {
+            statusCode: response.status,
+            body: responseBody as T,
+            ...(errorMessage !== undefined ? { error: errorMessage } : {}),
+          };
+
+          this.logger.debug(`Received response from ${url}`, responsePayload);
+
+          return responsePayload;
         } catch (error) {
           clearTimeout(timeoutId);
 
