@@ -5,13 +5,18 @@ A production-ready TypeScript client for the Tank01 NFL API, providing comprehen
 
 ## Overview
 
-This package provides a clean, type-safe interface for accessing all Tank01 NFL API endpoints. Built with TypeScript strict mode, featuring comprehensive type definitions, runtime validation with Zod schemas, and a flat interface design for maximum developer experience.
+This package provides a clean, type-safe interface for accessing all Tank01 NFL API endpoints. Built with TypeScript strict mode, featuring comprehensive type definitions, optional Zod schemas for validation, and a flat interface design for maximum developer experience.
 
-**Version 1.0.2** is production-ready with 21+ validated endpoints, full TypeScript support, and comprehensive documentation.
+**Version 1.0.3** is production-ready with 21+ endpoints, full TypeScript support, and comprehensive documentation.
 
 🔗 [Tank01 NFL API Documentation](https://rapidapi.com/tank01/api/tank01-nfl-live-in-game-real-time-statistics-nfl/playground)
 
 ## Recent Updates
+
+### Version 1.0.3
+- 🚚 Responses now return the HTTP status and raw payload via `Tank01Response<T> { statusCode, body, error? }`
+- 🔄 Removed automatic response validation; Zod schemas remain available for optional consumer validation
+- 🧰 Updated examples to unwrap `body`
 
 ### Version 1.0.2
 - 🔧 Fixed published type declarations path (`types` now resolves to `dist/index.d.ts`)
@@ -24,7 +29,7 @@ This package provides a clean, type-safe interface for accessing all Tank01 NFL 
 - ✅ **Production Ready**: Stable API with comprehensive testing
 - 🔒 **Type Safety**: Full TypeScript strict mode compliance
 - ✨ **21+ Endpoints**: Complete coverage of Tank01 NFL API
-- 📊 **Validated Types**: Zod runtime validation for all responses
+- 📊 **Validated Types**: Zod schemas available for consumer-side validation of responses
 - 🎯 **Flat Interface**: Direct method access for simplicity
 - 🛡️ **OR Parameter Validation**: Type-safe either/or constraints
 - 📚 **Complete Docs**: JSDoc for every method with examples
@@ -41,10 +46,10 @@ This package provides a clean, type-safe interface for accessing all Tank01 NFL 
 
 This project follows strict development principles:
 
-- **Type Safety First**: TypeScript strict mode, no `any` types, Zod runtime validation
+- **Type Safety First**: TypeScript strict mode, no `any` types, Zod schemas available for validation
 - **Feature Organization**: Code organized by NFL domain (players, teams, games, fantasy, odds, news, info)
 - **Comprehensive Testing**: Unit and integration tests for all functionality
-- **API Compliance**: Runtime validation catches API changes immediately
+- **API Compliance**: Zod schemas help detect API shape changes quickly when you opt in to validation
 - **Developer Experience**: Intuitive flat interface, clear errors, complete JSDoc documentation
 
 ### Naming Conventions
@@ -66,7 +71,7 @@ Consistent naming across all contexts:
 - ✅ **Flat Interface**: Direct method access - `client.getNFLTeams()`
 - ✅ **Type-Safe OR Validation**: Enforces either/or parameter constraints with clear errors
 - ✅ **21 NFL Endpoints**: Complete Tank01 API coverage - teams, players, games, fantasy, odds, news
-- ✅ **Runtime Validation**: Zod schemas validate all API responses and catch breaking changes
+- ✅ **Optional Validation**: Zod schemas provided for consumers to validate responses as needed
 - ✅ **Automatic Retry**: Exponential backoff with configurable retry logic
 - ✅ **Flexible Configuration**: Timeouts, retries, debug mode
 - ✅ **Dual Module Support**: CommonJS and ES modules (CJS + ESM)
@@ -104,6 +109,10 @@ const client = new Tank01Client({
 
 ## Usage
 
+### Response shape
+
+All methods return `Promise<Tank01Response<T>>` with `{ statusCode, body, error? }`. The examples below unwrap `body` for convenience; access `statusCode` to inspect HTTP results or `error` if provided by the API.
+
 ### Quick Start
 
 ```typescript
@@ -113,26 +122,26 @@ import { Tank01Client } from 'tank01-nfl-client';
 const client = new Tank01Client();
 
 // Get all teams
-const teams = await client.getNFLTeams();
+const { body: teams } = await client.getNFLTeams();
 console.log(`Total teams: ${teams.length}`); // 32
 
 // Get specific team
-const niners = await client.getNFLTeam('SF');
+const { body: niners } = await client.getNFLTeam('SF');
 console.log(niners.teamName); // "San Francisco 49ers"
 
 // Get team roster
-const roster = await client.getNFLTeamRoster({
+const { body: roster } = await client.getNFLTeamRoster({
   teamID: 'SF',
   getStats: true,
 });
 console.log(`Roster size: ${roster.length}`);
 
 // Get player info
-const purdy = await client.getNFLPlayerInfo({ playerID: '4381786' });
+const { body: purdy } = await client.getNFLPlayerInfo({ playerID: '4381786' });
 console.log(purdy.longName); // "Brock Purdy"
 
 // Get games for a week
-const games = await client.getNFLGamesForWeek({
+const { body: games } = await client.getNFLGamesForWeek({
   week: '1',
   season: '2024',
 });
@@ -143,7 +152,7 @@ console.log(`Week 1 games: ${games.length}`);
 
 ```typescript
 // Get all teams with optional data
-const teams = await client.getNFLTeams({
+const { body: teams } = await client.getNFLTeams({
   rosters: true,
   teamStats: true,
   teamStatsSeason: '2024',
@@ -152,12 +161,12 @@ const teams = await client.getNFLTeams({
 console.log(`Total teams: ${teams.length}`); // 32
 
 // Get specific team
-const niners = await client.getNFLTeam('SF');
+const { body: niners } = await client.getNFLTeam('SF');
 console.log(niners.teamName); // "San Francisco 49ers"
 console.log(niners.wins, niners.loss); // Season record
 
 // Get team roster with stats
-const roster = await client.getNFLTeamRoster({
+const { body: roster } = await client.getNFLTeamRoster({
   teamID: 'SF',
   getStats: true,
   fantasyPoints: true,
@@ -170,13 +179,13 @@ roster.forEach(player => {
 });
 
 // Historical roster
-const archiveRoster = await client.getNFLTeamRoster({
+const { body: archiveRoster } = await client.getNFLTeamRoster({
   teamAbv: 'KC',
   archiveDate: '20240901',
 });
 
 // Get depth charts for all teams
-const depthCharts = await client.getNFLDepthCharts();
+const { body: depthCharts } = await client.getNFLDepthCharts();
 const sfDepth = depthCharts.find(dc => dc.teamAbv === 'SF');
 console.log('QB depth:', sfDepth?.depthChart?.QB);
 ```
@@ -185,11 +194,11 @@ console.log('QB depth:', sfDepth?.depthChart?.QB);
 
 ```typescript
 // Get all players (4,500+ records)
-const players = await client.getNFLPlayerList();
+const { body: players } = await client.getNFLPlayerList();
 console.log(`Total players: ${players.length}`);
 
 // Get player by ID with stats (OR validation: playerID OR playerName required)
-const purdy = await client.getNFLPlayerInfo({
+const { body: purdy } = await client.getNFLPlayerInfo({
   playerID: '4381786',
   getStats: true,
 });
@@ -197,29 +206,29 @@ console.log(purdy.longName); // "Brock Purdy"
 console.log(purdy.team, purdy.pos); // Team and position
 
 // Get player by name
-const mahomes = await client.getNFLPlayerInfo({
+const { body: mahomes } = await client.getNFLPlayerInfo({
   playerName: 'Patrick Mahomes',
   getStats: true,
 });
 
 // Search players with filters
-const sfQBs = await client.searchNFLPlayers({
+const { body: sfQBs } = await client.searchNFLPlayers({
   team: 'SF',
   position: 'QB',
 });
 
 // Find rookies
-const rookies = await client.searchNFLPlayers({
+const { body: rookies } = await client.searchNFLPlayers({
   isRookie: true,
 });
 
 // Find injured players
-const injured = await client.searchNFLPlayers({
+const { body: injured } = await client.searchNFLPlayers({
   availabilityStatus: 'injured',
 });
 
 // Get player game logs with fantasy points
-const gameLogs = await client.getNFLGamesForPlayer({
+const { body: gameLogs } = await client.getNFLGamesForPlayer({
   playerID: '4381786',
   numberOfGames: 5,
   fantasyPoints: true,
@@ -233,7 +242,7 @@ Object.values(gameLogs).forEach(game => {
 
 ```typescript
 // Get games for a specific week
-const games = await client.getNFLGamesForWeek({
+const { body: games } = await client.getNFLGamesForWeek({
   week: '1',
   season: '2024',
   seasonType: 'reg', // 'reg', 'post', 'pre', 'all'
@@ -244,33 +253,33 @@ games.forEach(game => {
 });
 
 // Playoff games
-const playoffs = await client.getNFLGamesForWeek({
+const { body: playoffs } = await client.getNFLGamesForWeek({
   week: '1',
   seasonType: 'post',
 });
 
 // Get games by date
-const dateGames = await client.getNFLGamesForDate({
+const { body: dateGames } = await client.getNFLGamesForDate({
   gameDate: '20240908',
 });
 
 // Get detailed game info
-const game = await client.getNFLGameInfo('20240908_SF@PIT');
+const { body: game } = await client.getNFLGameInfo('20240908_SF@PIT');
 console.log(game.scoringPlays); // All scoring plays
 console.log(game.teamStats); // Team statistics
 
 // Get team schedule
-const schedule = await client.getNFLTeamSchedule('SF', '2024');
+const { body: schedule } = await client.getNFLTeamSchedule('SF', '2024');
 console.log(`Season games: ${schedule.length}`);
 
 // Search games with filters
-const playoffGames = await client.searchNFLGames({
+const { body: playoffGames } = await client.searchNFLGames({
   season: '2024',
   playoffsOnly: true,
 });
 
 // Quick scores only (lightweight)
-const scores = await client.getNFLScoresOnly({
+const { body: scores } = await client.getNFLScoresOnly({
   week: '1',
   season: '2024',
 });
@@ -280,7 +289,7 @@ const scores = await client.getNFLScoresOnly({
 
 ```typescript
 // Get live box score with play-by-play
-const boxScore = await client.getNFLBoxScore({
+const { body: boxScore } = await client.getNFLBoxScore({
   gameID: '20240908_SF@PIT',
   playByPlay: true,
   fantasyPoints: true,
@@ -300,40 +309,40 @@ if (isLive) {
 
 ```typescript
 // Average Draft Position (6 formats available)
-const adp = await client.getNFLADP('halfPPR');
+const { body: adp } = await client.getNFLADP('halfPPR');
 // Available formats: 'halfPPR', 'PPR', 'standard', 'bestBall', 'IDP', 'superFlex'
 console.log('Top 10 ADP:', adp.slice(0, 10));
 
 // ADP for specific position
-const rbAdp = await client.getNFLADP('PPR', { pos: 'RB' });
+const { body: rbAdp } = await client.getNFLADP('PPR', { pos: 'RB' });
 console.log('Top RBs:', rbAdp.filter(p => p.pos === 'RB').slice(0, 10));
 
 // Historical ADP from specific date
-const historicalAdp = await client.getNFLADP('standard', {
+const { body: historicalAdp } = await client.getNFLADP('standard', {
   adpDate: '20240901',
 });
 
 // Weekly fantasy projections
-const projections = await client.getNFLProjections({ week: '1' });
+const { body: projections } = await client.getNFLProjections({ week: '1' });
 console.log('Week 1 projections count:', Object.keys(projections).length);
 
 // Player-specific projections
-const purdyProj = await client.getNFLProjections({
+const { body: purdyProj } = await client.getNFLProjections({
   playerID: '4381786',
 });
 
 // Team projections
-const sfProj = await client.getNFLProjections({
+const { body: sfProj } = await client.getNFLProjections({
   teamID: 'SF',
   week: '5',
 });
 
 // Daily Fantasy Sports salaries and data
-const dfs = await client.getNFLDFS('20240908');
+const { body: dfs } = await client.getNFLDFS('20240908');
 console.log('DFS players available:', Object.keys(dfs).length);
 
 // DFS with team defense included
-const dfsWithDefense = await client.getNFLDFS('20240908', {
+const { body: dfsWithDefense } = await client.getNFLDFS('20240908', {
   includeTeamDefense: true,
 });
 ```
@@ -342,13 +351,13 @@ const dfsWithDefense = await client.getNFLDFS('20240908', {
 
 ```typescript
 // Get odds for all games on a date (OR validation: gameDate OR gameID required)
-const odds = await client.getNFLBettingOdds({
+const { body: odds } = await client.getNFLBettingOdds({
   gameDate: '20240908',
 });
 console.log('Games with odds:', Object.keys(odds).length);
 
 // Get odds for specific game with player props
-const gameOdds = await client.getNFLBettingOdds({
+const { body: gameOdds } = await client.getNFLBettingOdds({
   gameID: '20240908_SF@PIT',
   playerProps: true,
 });
@@ -356,7 +365,7 @@ console.log('Spread:', gameOdds['20240908_SF@PIT']?.odds?.spread);
 console.log('Over/Under:', gameOdds['20240908_SF@PIT']?.odds?.total);
 
 // Player-specific prop bets
-const purdyProps = await client.getNFLBettingOdds({
+const { body: purdyProps } = await client.getNFLBettingOdds({
   gameDate: '20240908',
   playerProps: true,
   playerID: '4381786',
@@ -368,11 +377,11 @@ const purdyProps = await client.getNFLBettingOdds({
 
 ```typescript
 // Get all recent NFL news
-const news = await client.getNFLNews();
+const { body: news } = await client.getNFLNews();
 console.log('Latest articles:', news.length);
 
 // Team-specific news
-const sfNews = await client.getNFLNews({
+const { body: sfNews } = await client.getNFLNews({
   teamAbv: 'SF',
   recentNews: true,
   maxItems: 10,
@@ -383,13 +392,13 @@ sfNews.forEach(article => {
 });
 
 // Fantasy-relevant news for a player
-const purdyNews = await client.getNFLNews({
+const { body: purdyNews } = await client.getNFLNews({
   playerID: '4381786',
   fantasyNews: true,
 });
 
 // Top/breaking news only
-const topNews = await client.getNFLNews({
+const { body: topNews } = await client.getNFLNews({
   topNews: true,
   maxItems: 5,
 });
